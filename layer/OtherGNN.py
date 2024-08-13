@@ -180,7 +180,7 @@ class MeanGNN(Module):
         node_local_emb = node_local_emb.contiguous() # batch_size * n_demand * max_nodes_len * embedding_dim_node
         nodes_weight = self.get_node_weight(nodes_categories_matrixes,
                                             demand_scores)  # batch_size *n_demand* max_nodes_len * 1
-        if self.non_linear_demand_score != 'sigmoid': # 'relu' or None # todo 这里考虑一下去掉sigmoid函数
+        if self.non_linear_demand_score != 'sigmoid': # 'relu' or None 
             nodes_weight = torch.sigmoid(nodes_weight)
 
         graph_representation = graph_representation.unsqueeze(2).repeat(1, 1, max_nodes_len, 1) # batch_size * n_demand * max_nodes_len * embedding_dim_node
