@@ -15,8 +15,8 @@ from util.utils import file_write
 
 class DefaultConfig(object):
     # 用于添加output.txt 的首行说明
-    # beizhu ="datasets:digi, RS: SR-GNN, last item,  MeanGNN, key demand share， L2正则"#'server: 1607, 数据集 tmall_minoccur30_0321，key demand share，hidden_size=128， sr_gnn 加最后一个item,类别 MeanGNN '#  #  测试gcn mean 聚合'
-    beizhu ="datasets:tmall，key demand share，hidden_size=100，sr_gnn"
+    beizhu ="datasets:digi, RS: SR-GNN, last item,  MeanGNN, key demand share， L2正则"#'server: 1607, 数据集 tmall_minoccur30_0321，key demand share，hidden_size=128， sr_gnn 加最后一个item,类别 MeanGNN '#  #  测试gcn mean 聚合'
+    # beizhu ="datasets:tmall，key demand share，hidden_size=100，sr_gnn"
     beizhu1 = "info"
 
     define_dictory = "digi_demand_agg_exp"
