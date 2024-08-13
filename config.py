@@ -8,7 +8,7 @@ import warnings
 import torch as t
 from util.utils import file_write
 
-# todo： 加载最优模型，要改
+
 #  1）config.py中的 gpu_id, 和 dataset
 #  2）utils.py中的 file_write函数中的 load_optimal_model=True
 #  3）main.py 中的 epoch， log_dir_train_checkpoint
