@@ -37,7 +37,7 @@ def tafeng_main():
     file_load = 'datasets/tafeng/ta_feng.csv'
     saving_load = 'datasets/tafeng_exclude/'  # session 的长度最小为2，即除去target之后最小是1
     data = load_tafeng(file_path=file_load, nrows=None)
-    beizhu = '2020-02-24, exculde item not in train when process test data, sess_enhancement: False'
+    beizhu = 'exculde item not in train when process test data, sess_enhancement: False'
     base_preprocessor(data, saving_load, beizhu=beizhu, sess_enhancement=False, exclude_item=True, minimun_session_length=2, minimum_occurrence=5, time_interval= 60 * 60 * 24, maximum_length=50,
                        train_size=0.8, works=16)
     print('base_preprocessor finished')
