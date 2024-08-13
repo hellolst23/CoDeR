@@ -194,8 +194,6 @@ class MeanGNN(Module):
         if nodes_weight.requires_grad:
             nodes_weight.retain_grad()
         target_informax = nodes_weight
-        loss = self.loss(score, target_informax.detach())  # fixme 1）不确定多维输入进去，是不是想要的loss值 2）后面补0的节点，不应该放进去算loss
-        # todo 这里没有对nodes_weight 求导，目前觉得对训练没有影响，具体这么写起到什么效果， 后续再看
-        # loss 这一块统一研究一下
+        loss = self.loss(score, target_informax.detach())  
 
         return loss
