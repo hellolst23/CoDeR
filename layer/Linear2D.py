@@ -59,7 +59,7 @@ class Linear2D(nn.Module):
             if self.bias is not None:
                 output = output + self.bias.unsqueeze(0)  # batchSize  *  (*) * N * out_features
         return output
-    #todo 暂时实现 input是四维的情况
+
 
     def extra_repr(self):
         return 'z_features={}, in_features={}, out_features={}, bias={}'.format(
