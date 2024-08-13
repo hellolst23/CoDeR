@@ -34,7 +34,7 @@ from util.utils import file_write
 #             file_write(log_path_txt, f'There is {self.n_negative} negative sample by {sample_stategy} sampling')
 #
 #
-#     def forward(self,lamda, info_loss,l2_loss, result_click, target, demand_sim_loss, neg_sample=None): # fixme 这里把补0的节点也算进去了，后续更改
+#     def forward(self,lamda, info_loss,l2_loss, result_click, target, demand_sim_loss, neg_sample=None): 
 #         """
 #         Args:
 #             lamda: torch.scalar, control the impact of info_max_loss
@@ -60,7 +60,7 @@ from util.utils import file_write
 #         # NOTE：remove demand_sim_loss
 #         # rs_loss = click_loss + lamda * info_loss + l2_loss + 0 * demand_sim_loss
 #         # NOTE：正常loss
-#         rs_loss = click_loss + lamda * info_loss + l2_loss + 0.5 * demand_sim_loss  # todo Note: 注意这里是否考虑了需求之间的独立性
+#         rs_loss = click_loss + lamda * info_loss + l2_loss + 0.5 * demand_sim_loss 
 #
 #         return rs_loss, click_loss
 #
@@ -122,7 +122,7 @@ class Loss_Diy(nn.Module):
             file_write(log_path_txt, f'There is {self.n_negative} negative sample by {sample_stategy} sampling')
 
 
-    def forward(self, info_loss,l2_loss, result_click, target_item, demand_sim_loss, neg_sample=None, catgy_click=None, target_catgy=None): # fixme 这里把补0的节点也算进去了，后续更改
+    def forward(self, info_loss,l2_loss, result_click, target_item, demand_sim_loss, neg_sample=None, catgy_click=None, target_catgy=None): 
         """
         Args:
             lamda: torch.scalar, control the impact of info_max_loss
@@ -148,7 +148,7 @@ class Loss_Diy(nn.Module):
         # NOTE：remove demand_sim_loss
         # rs_loss = click_loss + lamda * info_loss + l2_loss + 0 * demand_sim_loss
         # NOTE：正常loss
-        rs_loss = click_loss + self.info_lamda * info_loss + l2_loss  # todo Note: 注意这里是否考虑了需求之间的独立性
+        rs_loss = click_loss + self.info_lamda * info_loss + l2_loss  
         # rs_loss = click_loss + self.info_lamda * info_loss + l2_loss + 0 * demand_sim_loss
         # NOTE: 加catgy 预测的loss
         if self.catgy_lamda > 0 :
