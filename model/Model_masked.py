@@ -40,7 +40,7 @@ class DemandAwareRS(nn.Module):
         self.graph_aggregation_method = config.graph_aggregation
 
         if config.graph_aggregation == 'lstm':
-            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) #todo 不知道后面补的0对其是否有影响
+            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) 
 
         self.p_v_s_d = PVSD(config.embedding_dim_i,config.batch_norm,config.n_demand, config.rs)
 
