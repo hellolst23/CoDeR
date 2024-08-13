@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 # @File    : main.py
-# Reference: https://github.com/CRIPAC-DIG/SR-GNN/blob/master/pytorch_code/main.py
+
 """
 #todo !!! Note: load data之后，item_catgy 首行为（0，0）
 
@@ -316,10 +316,10 @@ if __name__ == '__main__':
     print(params)
     main(params)
 
-    # todo 加载的模型预测值和 训练时的预测值不一样， 但是直接在main函数中加载是一样的
+
     def load_optimal_model():
 
-        # todo 更改 最优模型的epoch， 以及所在目录 log_dir_train_checkpoint
+
         epoch = 1  # tmall:3 , tafeng:
         log_dir_train_checkpoint = "/home/ylq/git/seqRS/current/DemandRS/visual/tafeng_0117/DemandRS/210329-220729_key demand share L2正则-重要/checkpoint"
             # "/home/ylq/git/seqRS/current/DemandRS/visual/tmall_minoccur30_0321/DemandRS/211123-151351_key demand share L2正则-重要/checkpoint"
