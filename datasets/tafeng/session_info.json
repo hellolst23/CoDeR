@@ -1,0 +1,8 @@
+{"beizhu": "exclude_item=False, sess_enhancement: False, preprocess again to run all the baselines ",
+  "hyper_minimum_session_length": 2, "hyper_maximum_session_length": 50,
+  "hyper_minimum_occurrence": 5, "hyper_train_size": 0.8,
+  "num_of_user": 32186,
+  "num_of_item[not include 0]": 14637,
+  "num_of_category": 1638,
+  "Total number of session after enhancement": 100690, "Total number of session before enhancement": 100690,
+  "Total number of train session": 80552, "Total number of test session": 20138}
