@@ -1,0 +1,7 @@
+{
+    "batch_size": {"_type":"choice", "_value": [100]},
+    "hidden_size":{"_type":"choice","_value":[100]},
+    "n_demand":{"_type":"choice", "_value": [1,2,3,4,5,6]},
+    "n_negative": {"_type":"choice", "_value": [3]},
+    "seed":{"_type":"choice", "_value": [2021]}
+}

@@ -1,0 +1,12 @@
+{
+    "batch_size": {"_type":"choice", "_value": [128]},
+    "hidden_size":{"_type":"choice","_value":[128, 100, 64, 50]},
+    "n_demand":{"_type":"choice", "_value": [1,2,3,4]},
+    "nonhybrid":{"_type":"choice", "_value": [false, true]},
+    "n_negative": {"_type":"choice", "_value": [0,1,2,3,4,5]},
+    "beta":{"_type":"choice", "_value": [0.5, 0.6, 0.7, 0.8, 0.9,1.0]},
+    "embed_l2":{"_type":"choice", "_value": [0.001, 0.0005, 0.0001, 0.00005, 0.00001]},
+    "lr":{"_type":"choice","_value":[0.0001, 0.001, 0.01,  0.0005]},
+    "lr_dc":{"_type":"choice", "_value": [0.1, 0.001, 0.005]},
+    "lr_dc_step":{"_type":"choice", "_value": [1,2,3,4,5]}
+}
