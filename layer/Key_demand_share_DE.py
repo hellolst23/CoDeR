@@ -44,7 +44,7 @@ class DemandExtraction(Module):
         self.embedding_c = nn.Embedding(n_categories, embedding_dim_c, padding_idx=0)
         self.demand_linear = nn.Linear(embedding_dim_c, n_demand * hidden_size,
                                        bias=False)
-        self.key_linear = nn.Linear(embedding_dim_c, hidden_size)  # TODO: 是否要map到M个空间？
+        self.key_linear = nn.Linear(embedding_dim_c, hidden_size) 
 
         assert self.demand_extract == 'mlp' or self.demand_extract == 'dot'
         if self.demand_extract == 'mlp':
@@ -89,7 +89,7 @@ class DemandExtraction(Module):
         return demand_score, demand_score_candidate
 
     def compute_demand_score_mlp(self, hidden_demand_agg, hidden_key,
-                                 hidden_key_candidate):  # todo: mlp for demand extraction 没有改
+                                 hidden_key_candidate):  
         """
          demand score 的计算方式，使用 mlp
          Args:
@@ -115,7 +115,7 @@ class DemandExtraction(Module):
 
         hidden_key_candidate = hidden_key_candidate.view(1, 1, -1, self.hidden_size).repeat(batch_size, self.n_demand,
                                                                                             1,
-                                                                                            1)  # todo 检查这里demand——score 的计算方式
+                                                                                            1)  
         hidden_demand_agg = hidden_demand_agg.view(batch_size, self.n_demand, 1, self.hidden_size).repeat(1, 1, n_items,
                                                                                                           1)
         demand_score_candidate = self.nn_linear_score(torch.cat((hidden_demand_agg, hidden_key_candidate),
@@ -156,7 +156,7 @@ class DemandExtraction(Module):
         hidden_key = self.demand_linear(embedding).view(batch_size, max_session_len, self.n_demand,
                                                         self.hidden_size)
         hidden_demand = self.demand_linear(embedding).view(batch_size, max_session_len, self.n_demand,
-                                                           self.hidden_size)  # batch_size * max_session_len * n_demand * hidden_size # TODO: 是否可以加上relu等非线性激活函数？
+                                                           self.hidden_size)  # batch_size * max_session_len * n_demand * hidden_size 
         if self.demand_agg == "exp":
             hidden_demand_agg = hidden_demand.exp().sum(1).log()  # batch_size * n_demand * hidden_size
         elif self.demand_agg == "mean":
