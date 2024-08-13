@@ -78,7 +78,6 @@ class PVSD(nn.Module):
             hidden = self.nn_linear1(hidden)  # batch_size * n_demand * (n_item+1) *  hidden_size
             hidden = self.batch_norm_custom(hidden)  # batch_size * n_demand * (n_item+1) *  hidden_size
             p_v_s_d = self.nn_linear2(self.act_func(hidden)).squeeze(-1)  # batch_size * n_demand * (n_item+1)
-            # todo 这里考虑是否要加一个激活函数 Relu，然后再到loss中经过softmax
 
         elif self.rs == 'dot':
             """
