@@ -176,7 +176,7 @@ class DemandExtraction(Module):
         hidden_key = self.key_linear(embedding)  # batch_size * max_session_len * embedding_dim_c
         # hidden_key = torch.selu(hidden_key)
         hidden_demand = self.demand_linear(embedding).view(batch_size, max_session_len, self.n_demand,
-                                                           self.hidden_size)  # batch_size * max_session_len * n_demand * hidden_size # TODO: 是否可以加上relu等非线性激活函数？
+                                                           self.hidden_size)  # batch_size * max_session_len * n_demand * hidden_size 
         # hidden_demand = torch.selu(hidden_demand)
         if self.demand_agg == "exp":
             hidden_demand_agg = hidden_demand.exp().sum(1).log()  # batch_size * n_demand * hidden_size
@@ -402,7 +402,7 @@ class DemandExtraction(Module):
 
 #         hidden_key_candidate = hidden_key_candidate.view(1, 1, -1, self.hidden_size).repeat(batch_size, self.n_demand,
 #                                                                                             1,
-#                                                                                             1)  # todo 醒来检查这里demand——score 的计算方式
+#                                                                                             1) 
 #         hidden_demand_agg = hidden_demand_agg.view(batch_size, self.n_demand, 1, self.hidden_size).repeat(1, 1, n_items,
 #                                                                                                           1)
 #         demand_score_candidate = self.nn_linear_score(torch.cat((hidden_demand_agg, hidden_key_candidate),
