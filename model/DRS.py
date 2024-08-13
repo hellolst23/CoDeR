@@ -53,11 +53,11 @@ class DemandAwareRS(nn.Module):
         else:
             file_write(self.log_path_txt, 'There is GNN part')
         self.gnn_layer = GNN(config, config.n_demand, config.embedding_dim_i, config.dashed_order, config.bias,
-                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node)  # TODO: How many layer to use?
+                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node)  
         self.graph_aggregation_method = config.graph_aggregation
 
         if config.graph_aggregation == 'lstm':
-            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) #todo 不知道后面补的0对其是否有影响
+            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) 
 
         self.p_v_s_d = PVSD(config.embedding_dim_i,config.batch_norm,config.n_demand, config.rs)
 
@@ -83,7 +83,6 @@ class DemandAwareRS(nn.Module):
 
     def recomend_srgnn(self, hidden, demand_score_candidate, session_last_item_index, mask_node, batch_size):
         """
-        This recommend past is same to SR-GNN，https://arxiv.org/abs/1811.00855
         Args:
             hidden: torch.Tensor, dtype=torch.int64, batch_size * n_demand * max_nodes_len * embedding_dim_node, node representation after gnn layer
             demand_score_candidate: torch.Tensor, dtype=torch.float32  batch_size * n_demand * n_items
@@ -110,7 +109,7 @@ class DemandAwareRS(nn.Module):
 
         if not self.nonhybrid:
             a = self.linear_transform(torch.cat([a, last_item_info], dim=-1))
-        # b_i = self.embedding.weight[1:]  # n_nodes x latent_size，这里把数据集合中所有的item都当成candidate sets
+        # b_i = self.embedding.weight[1:]  # n_nodes x latent_size
         b = self.embedding_i.weight.unsqueeze(0).unsqueeze(0).repeat(batch_size, self.n_demand, 1,1)
         # include 0, Batch_size * n_demand * (n_item) * embedding_dim_node
 
@@ -199,7 +198,7 @@ class DemandAwareRS(nn.Module):
 
 
 
-    def compute_score(self, session_representation,demand_score_candidate, batch_size): #todo Recommendation 这一块没有仔细检查
+    def compute_score(self, session_representation,demand_score_candidate, batch_size):
         """
         compute P_v
         Args:
