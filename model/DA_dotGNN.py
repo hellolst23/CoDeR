@@ -56,11 +56,11 @@ class DemandAwareRS(nn.Module):
             file_write(self.log_path_txt, 'There is GNN part')
 
         self.gnn_layer = MeanGNN(config,config.n_demand, config.embedding_dim_i, config.dashed_order, config.bias,
-                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node)  # TODO: How many layer to use?
+                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node) 
         self.graph_aggregation_method = config.graph_aggregation
 
         if config.graph_aggregation == 'lstm':
-            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) #todo 不知道后面补的0对其是否有影响
+            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) 
 
         self.p_v_s_d = PVSD(config.embedding_dim_i,config.batch_norm,config.n_demand, config.rs)
 
@@ -101,7 +101,7 @@ class DemandAwareRS(nn.Module):
         #hidden: batch_size * n_demand * max_nodes_len * embedding_dim_node,
         last_item_info = hidden.transpose(2, 1)[torch.arange(
             len(session_last_item_index)), session_last_item_index]  # batch_size * n_demand * embedding_dim_node
-        # todo 这里不同的demand 对应的全连接参数共享
+  
         q1 = self.linear_one(last_item_info).unsqueeze(2) # batch_size * n_demand * 1 * embedding_dim_node
         q2 = self.linear_two(hidden) # batch_size * n_demand * max_nodes_len * embedding_dim_node
         alpha = self.linear_three(torch.sigmoid(q1 + q2)) # batch_size * n_demand * max_nodes_len * 1
@@ -110,7 +110,7 @@ class DemandAwareRS(nn.Module):
 
 
         a = torch.matmul(mask_node.view(batch_size,1,1,max_nodes_len).float(), hidden).squeeze(-2) # batch_size * n_demand * embedding_dim_node
-        graph_representation = a # todo 互信息计算，不能加入补的0，因为graph 聚合时也没有加
+        graph_representation = a
 
         if not self.nonhybrid:
             a = self.linear_transform(torch.cat([a, last_item_info], dim=-1))
@@ -205,7 +205,7 @@ class DemandAwareRS(nn.Module):
 
 
 
-    def compute_score(self, session_representation,demand_score_candidate, batch_size): #todo Recommendation 这一块没有仔细检查
+    def compute_score(self, session_representation,demand_score_candidate, batch_size): 
         """
         compute P_v
         Args:
@@ -256,7 +256,6 @@ class DemandAwareRS(nn.Module):
 
     def regularize(self, gnn_result, mask_nodes):
         """
-        References: BGCN , 对最终预测前的embedding做 L2 正则,
         Args:
             gnn_result: item emb after gnn, batch_size * n_demand * max_nodes_len * embedding_dim_node
             mask_nodes: torch.Tensor, dtype=torch.int64, batch_size * max_nodes_len, record the clicked nodes in a session
