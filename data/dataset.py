@@ -3,7 +3,6 @@
 """
 
 # @File    : dataset.py
-# Reference: NARM/dataset.py Reference: https://github.com/lijingsdu/sessionRec_NARM/blob/master/data_process.py
 # Desc:
 """
 import os
@@ -57,7 +56,7 @@ def load_data(dataset_dir, validation_flag=True, valid_portion=0.5):
     valid_set = test_set
     if validation_flag:
         valid_set, test_set = train_test_split(test_set, test_size=valid_portion, random_state=123)
-    item_category.insert(0, 0)  # add empty category at font # todo Note 这里有加
+    item_category.insert(0, 0)  # add empty category at font 
     item_category = torch.tensor(item_category).long()
     return train_set, valid_set, test_set, item_category, session_info
 
@@ -138,7 +137,7 @@ def sess_collate_fn(batch):
             mask_catgy[i] = 1
             u = np.where(unique_items == sess_items[i])[0][
                 0]  # np.where() 返回一个元组， 元组元素只有一个，为一个array数组， 记录node array数组中值为session item id 的索引
-            if not mask[u]: #todo mask的实现方式可以优化，不用放在循环里面
+            if not mask[u]: 
                 mask[u] = 1
             v = np.where(unique_items == sess_items[i + 1])[0][0]
             if not solid_adj_matrix[u][v]:
