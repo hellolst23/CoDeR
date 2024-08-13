@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 # @File    : metric.py
-# reference: NARM/metric.py
 # Desc: Implement evaluation function
 """
 
