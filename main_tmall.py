@@ -348,10 +348,10 @@ if __name__ == '__main__':
         main(params)
     main()
 
-    # todo 加载的模型预测值和 训练时的预测值不一样， 但是直接在main函数中加载是一样的
+
     def load_optimal_model():
 
-        # todo 更改 最优模型的epoch， 以及所在目录 log_dir_train_checkpoint
+
         epoch = 3  # tmall:3 , tafeng:
         log_dir_train_checkpoint = "./checkpoint/tmall"
             # ./checkpoint/tafeng
