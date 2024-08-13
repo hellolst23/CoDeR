@@ -1,12 +1,6 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*-
-# Reference:**********************************************
-# @Time     : 2020/11/9 15:26
-# @Author   : Raymond Luo
-# @File     : taobao_preprocessor.py
-# @User     : luoli
-# @Software: PyCharm
-# Reference:**********************************************
+
 """
 preprocess taobao dataset
 1) a session is a list ['user_id', 'start_time', 'end_time', 'item_list', 'category_list', 'target_item', 'target_category']
