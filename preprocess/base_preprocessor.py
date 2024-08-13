@@ -36,7 +36,7 @@ from itertools import chain
 6. 划分训练集和测试集，最近的 20% session 作为测试集
 7. 训练集和测试集分别存为.pkl文件
 """
-#todo !!!! 在base_preprocessor.py 文件中，item_catgy 中 类别对应的 item都是从1开始的
+
 
 
 def save_data(save_path,session_info,item_category,train_list,test_list):
@@ -243,7 +243,7 @@ def exclude_item_notin_training(train, test, item_category, session_info):
         df = df[['user_id', 'start_time', 'end_time', 'item_list', 'category_list', 'target_item','target_category']]
         return df
     df_test = session_encode_split(df_test_1, item_encoder,category_encoder)
-    df_train = session_encode_split(df_train_1, item_encoder, category_encoder) #todo 能跑通，回来检查一下是不是对的
+    df_train = session_encode_split(df_train_1, item_encoder, category_encoder)
     return df_train.values.tolist(), df_test.values.tolist(),item_category_new_1, session_info
 
 
