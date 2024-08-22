@@ -3,20 +3,13 @@
 """
 # @File    : taobao.py
 # Desc:
-处理taobao数据
 """
 # from preprocess import *
 from base_preprocessor import base_preprocessor
 import pickle
 
 def time_process(time):
-    """
-    将time（mmdd）转化成 （mm/dd/yyyy）形式
-    Args:
-        time: timestamp in tmall dataset, "mmdd"
 
-    Returns: time:  "dd/mm/yyyy "的形式
-    """
     time = str(time)[:-2]+'/'+str(time)[-2:]+'/'+'2000'
     return time
 
@@ -41,7 +34,7 @@ def load_taobao(file_path, nrows=None):
     print("-----------------------Read csv finished.-------------------------@ %ss" % datetime.datetime.now())
     data['timestamp'] = pd.to_datetime(data['timestamp'], unit='s')
     print(Counter(data['behavior_type']))
-    data_buy = data[(data['behavior_type'].isin(['buy']))] # NOTE: 新加的 只要buy的数据
+    data_buy = data[(data['behavior_type'].isin(['buy']))] 
     print(Counter(data_buy['behavior_type']))
     print(data_buy.head())
     data = data_buy['user_id', 'item_id', 'category_id', 'timestamp']
@@ -70,5 +63,5 @@ if __name__ == "__main__":
     tmall_main()
     # #"""
     # saving_dir = '../datasets/tmall_minoccur10_0321/'
-    # following_preprocessor(saving_dir)  # 转成SR-GNN 的接口
+    # following_preprocessor(saving_dir) 
     # #"""
