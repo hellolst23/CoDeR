@@ -32,7 +32,7 @@ class DemandExtraction(Module):
         # if visual_catgy_deamnd:
         #     self.visual_catgy_demand = visual_catgy_deamnd
 
-        self.n_categories = n_categories  # include 补[0]，
+        self.n_categories = n_categories 
         self.n_demand = n_demand
         self.hidden_size = hidden_size
 
@@ -405,7 +405,6 @@ class DemandExtraction(Module):
 
 #     def forward(self, input, candidate_pool_category):
 #         """
-#         模型返回对应的demand score
 #         Args:
 #             input:  sess_categories_batch，torch.Tensor， dtype = torch.int64， batch_size * max_session_len
 #             candidate_pool_category： torch.Tensor, n_items * 1 , each row such as [category_id], the order is one-to-one mapping candidate_pool_item
