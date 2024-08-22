@@ -23,7 +23,6 @@ class DemandAwareRS(nn.Module):
             config:
             gnn_mask: bool, default=False
         """
-        # 下面注释 n_item + 1 = n_items
         super(DemandAwareRS, self).__init__()
         self.gnn_mask = gnn_mask
         self.n_demand = config.n_demand
@@ -36,7 +35,7 @@ class DemandAwareRS(nn.Module):
         if self.gnn_mask:
             print('!!! Note: no gnn layer component')
         self.gnn_layer = GNN(config.n_demand, config.embedding_dim_i, config.dashed_order, config.bias,
-                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node)  # TODO: How many layer to use?
+                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node) 
         self.graph_aggregation_method = config.graph_aggregation
 
         if config.graph_aggregation == 'lstm':
@@ -158,7 +157,7 @@ if __name__ == '__main__':
     """
     import test_config as config
 
-    model = DemandAwareRS(n_items=32, n_categories=36, config=config) #n_items: 算补的0
+    model = DemandAwareRS(n_items=32, n_categories=36, config=config)
 
     sess_nodes = t.LongTensor(t.arange(1, 31).view(5, 6))  # batch_size=5, max_nodes_len=6
     sess_categories = t.LongTensor(t.arange(1, 36, ).view(5, 7))  # max_session_len=7
