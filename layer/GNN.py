@@ -16,9 +16,9 @@ class GNN(Module):
             n_demand: number of the demand
             embedding_dim_node: embedding dimension of the node
             dashed_order: order of the dashed edges, 1 means only the solid edges are available
-            demand_share_agg: bool, demand 的在gcn 邻居聚合时，是否共享参数
-            demand_share_node: bool, demand的节点更新时，是否共享参数
-            node_out: bool, 聚合是否考虑出度的邻居
+            demand_share_agg: bool
+            demand_share_node: bool
+            node_out: bool
         '''
         self.n_demand = n_demand
         self.dashed_order = dashed_order
@@ -28,23 +28,23 @@ class GNN(Module):
         self.dashed_weight = config.dashed_weight
 
         if demand_share_agg:
-            # 不同的demand，共享邻居聚合层参数
+
             self.solid_nn_linear = nn.Sequential(
                 nn.Linear((1+self.node_out)*embedding_dim_node, embedding_dim_node, bias=bias),
                 nn.ReLU()
             )
-            # 虚边邻居聚合，不同的order ，共享nn_linear 层
+
             self.dashed_nn_linear = nn.Sequential(
                 nn.Linear((1+self.node_out)*embedding_dim_node, embedding_dim_node,bias=bias),
                 nn.ReLU()
             )
         else:
-            # 不同的demand，不共享邻居聚合层参数
+
             self.solid_nn_linear = nn.Sequential(
                 Linear3D(self.n_demand, (1+self.node_out)*embedding_dim_node, embedding_dim_node, bias=bias),
                 nn.ReLU()
             )
-            # 虚边邻居聚合，相同demand，不同的order ，共享nn_linear 层
+
             self.dashed_nn_linear = nn.Sequential(
                 Linear3D(self.n_demand, (1+self.node_out)*embedding_dim_node, embedding_dim_node, bias=bias),
                 nn.ReLU()
@@ -61,9 +61,7 @@ class GNN(Module):
         self.weight_init()
 
     def weight_init(self):
-        '''
-        初始化该layer自己定义而非子模块的参数
-        '''
+
         # raise NotImplementedError
         return None
 
@@ -76,7 +74,6 @@ class GNN(Module):
         Returns:
             nodes_weight: torch.tensor, batch_size * n_demand * max_nodes_len * 1
         """
-        # nodes_categories_matrixes 按行归一化
         nodes_categories_matrixes = self.normalize_matrix(
             nodes_categories_matrixes)  # batch_size * max_nodes_len* max_session_len
         nodes_categories_matrixes = nodes_categories_matrixes.unsqueeze(
@@ -117,18 +114,15 @@ class GNN(Module):
         weight_demand_emb = nodes_weight * demand_session_node  # Bind weight to demand node emb, batch_size * n_demand * max_nodes_len * embedding_dim_node
         order_emb_output = []  # GNN output for each order
         adj_matrixes = adj_matrixes.permute(0, 2, 1).float()  # adj: target * source， a_ij: j->i
-        k_order_matrix = adj_matrixes  # 原始邻接矩阵，存存储邻接关系，batch_size * max_nodes_len * max_nodes_len, 从行看，表示入度，列看表示出度
-        # obtain dashed_edges_weight and 邻居节点表示之和
+        k_order_matrix = adj_matrixes 
         for i in range(self.dashed_order):
             # Solid edges
             if i == 0:
-                normalize_k_matrix_in = self.normalize_matrix(k_order_matrix)  # 按照节点的入度正则, batch_size * max_node_len * max_node_len
+                normalize_k_matrix_in = self.normalize_matrix(k_order_matrix) 
                 gnn_output = t.matmul(normalize_k_matrix_in.unsqueeze(1),weight_demand_emb)
-                # 计算入度的节点邻居, batch_size * n_demand * max_nodes_len * embedding_dim_node
-                # Note: 由于k_order_matrix已经按照入度正则，所以不需要再进行平均
                 if self.node_out:
                     k_order_matrix_out = k_order_matrix.transpose(2, 1)
-                    normalize_k_matrix_out = self.normalize_matrix(k_order_matrix_out) # 按照节点的出度正则, batch_size * max_node_len * max_node_len
+                    normalize_k_matrix_out = self.normalize_matrix(k_order_matrix_out) 
                     gnn_output_out = t.matmul(normalize_k_matrix_out.unsqueeze(1), weight_demand_emb) # batch_size * n_demand * max_nodes_len * embedding_dim_node
                     gnn_output = torch.cat((gnn_output, gnn_output_out), dim=-1) # batch_size * n_demand * max_nodes_len * (embedding_dim_node*2)
 
@@ -173,7 +167,6 @@ class GNN(Module):
             order_emb_output.append(gnn_output)
         order_emb_output = torch.cat(order_emb_output, dim=-1) # batch_size * n_demand * max_nodes_len * (embedding_dim_node * order)
 
-        # 节点更新
         output = self.gnn_weight(torch.cat((demand_session_node, order_emb_output), dim=-1)) # batch_size * n_demand * max_nodes_len * embedding_dim_node
 
         if self.non_linear == 'relu':
