@@ -238,7 +238,7 @@ def main():
         label_demand = []
         for i in range(opt.n_demand):
             label_demand += [i] * max_node_len
-        label_demand = label_demand * last_batch_size # 区分不同的demand
+        label_demand = label_demand * last_batch_size 
         if not opt.catgy_embedding:
             gnn_node_representation = gnn_node_representation.reshape(-1, opt.hidden_size)
             writer.add_embedding(gnn_node_representation, metadata=label_demand, global_step=epoch,
