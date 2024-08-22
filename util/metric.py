@@ -84,7 +84,7 @@ class NDCG(object):
         self.idcg = self.IDCG()
         self.is_hit = torch.zeros(self.topk, dtype=torch.float)
 
-    def DCG(self, indices, ground_truth, device): # 在GPU上计算
+    def DCG(self, indices, ground_truth, device): 
         hits = (ground_truth == indices).nonzero(as_tuple=False)
         ranks = hits[:, 1]
         ranks = ranks.float()
@@ -92,7 +92,7 @@ class NDCG(object):
         dcg = torch.sum(dcg_u).data / ground_truth.size(0)
         return dcg.item()
 
-    def IDCG(self):  #在cpu上计算
+    def IDCG(self):  
         if self.idcg_sum_k:
             #print('NDCG@%d: calculate the sum of position form 1 to topk'%(self.topk))
             hit = torch.zeros(self.topk, dtype=torch.float)
@@ -103,7 +103,7 @@ class NDCG(object):
             #print('NDCG@%d: only calculate the first position ' % (self.topk))
             return 1 / torch.log2(torch.tensor(2.0))
 
-    def __call__(self, indices, ground_truth): # 在GPU上计算
+    def __call__(self, indices, ground_truth): 
         device = indices.device
         dcg = self.DCG(indices, ground_truth, device)
         ndcg = dcg / self.idcg.to(device)
@@ -147,7 +147,7 @@ def get_auc(scores, ground_truth, Ks_auc = [100,200,500]):
 if __name__ == '__main__':
     import numpy as np
     import torch
-    # 测试 获取tensor各元素按升序或降序的位置
+    
     """
     scores = torch.randn(3,15)
     print(scores)
