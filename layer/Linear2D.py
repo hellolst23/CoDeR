@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 # @File    : Linear2D.py
-# Desc:
-    nn.Linear（）是用于设置网络中的全连接层
-    用矩阵乘法实现的 Linear 层，速度好像与nn.Linear 差不多
+
 """
 
 from layer import *
@@ -67,7 +65,6 @@ class Linear2D(nn.Module):
         )
 
 if __name__ == "__main__":
-    # Linear2D 测试代码
     m = Linear2D(10,20)
     a = torch.ones(6,2,15,10)
     b = m(a)
