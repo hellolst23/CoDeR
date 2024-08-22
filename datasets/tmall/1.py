@@ -2,7 +2,6 @@
 """
 @author:lifx1
 @file:1.py
-@time:2022/02/21
 """
 import pickle
 
