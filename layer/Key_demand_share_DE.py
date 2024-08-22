@@ -2,7 +2,6 @@
 """
 # @File    : Key_demand_share_DE.py
 # Desc:
-Key 与 demand share mlp 层
 """
 
 import math
@@ -19,12 +18,11 @@ class DemandExtraction(Module):
     def __init__(self, n_demand, n_categories, embedding_dim_c, hidden_size, score_act_fun=None, demand_extract='mlp',
                  demand_mask=False, demand_agg="exp"):
         """
-        初始化函数
         Args:
-            n_demand: int, 需求数量
-            n_categories: int, 类别节点的个数
-            embedding_dim_c: int, 类别嵌入到维度
-            hidden_size: int, 中间隐层（中间结果层的变量维度）
+            n_demand: int
+            n_categories: int
+            embedding_dim_c: int
+            hidden_size: int
             score_act_fun: str, None, relu, sigmoid
             demand_extract: str, mlp, dot
             demand_mask: bool, default=False, whether mask demand extraction part
@@ -32,7 +30,7 @@ class DemandExtraction(Module):
             demand_agg：str, default="exp"， "mean"
         """
         super(DemandExtraction, self).__init__()
-        self.n_categories = n_categories  # include 补[0]，
+        self.n_categories = n_categories 
         self.n_demand = n_demand
         self.hidden_size = hidden_size
 
@@ -56,16 +54,12 @@ class DemandExtraction(Module):
             self.weight_init()  # for self.w_score initialization
 
     def weight_init(self):
-        """
-        初始化该layer自己定义而非子模块的参数
-        """
         std = 1.0 / math.sqrt(self.hidden_size)
         self.w_score.data.uniform_(std)
         return None
 
     def compute_demand_score_dot(self, hidden_demand_agg, hidden_key, hidden_key_candidate):
         """
-        demand score 的计算方式，和ppt中的一样
         Args:
             hidden_demand_agg: torch.Tensor, batch_size * n_demand * hidden_size
             hidden_key: torch.Tensor, batch_size * max_session_len * n_demand * hidden_size
@@ -91,7 +85,6 @@ class DemandExtraction(Module):
     def compute_demand_score_mlp(self, hidden_demand_agg, hidden_key,
                                  hidden_key_candidate):  
         """
-         demand score 的计算方式，使用 mlp
          Args:
              hidden_demand_agg: torch.Tensor, batch_size * n_demand * hidden_size
              hidden_key: torch.Tensor, batch_size * max_session_len  * hidden_size
@@ -128,7 +121,6 @@ class DemandExtraction(Module):
 
     def forward(self, input, candidate_pool_category):
         """
-        模型返回对应的demand score
         Args:
             input:  sess_categories_batch，torch.Tensor， dtype = torch.int64， batch_size * max_session_len
             candidate_pool_category： torch.Tensor, n_items * 1 , each row such as [category_id], the order is one-to-one mapping candidate_pool_item
@@ -160,7 +152,7 @@ class DemandExtraction(Module):
         if self.demand_agg == "exp":
             hidden_demand_agg = hidden_demand.exp().sum(1).log()  # batch_size * n_demand * hidden_size
         elif self.demand_agg == "mean":
-            hidden_demand_agg = hidden_demand.sum(1)  # 均值聚合session的需求表达
+            hidden_demand_agg = hidden_demand.sum(1) 
         else:
             print("opt.demand_agg value is wrong !!!!")
         demand_sim_loss = self.demand_similarity_loss(hidden_demand_agg)
@@ -177,7 +169,7 @@ class DemandExtraction(Module):
             # demand_score_candidate: batch_size * n_demand * n_items
 
         if self.score_act_fun == 'relu':
-            demand_score = t.relu(demand_score)  # 为了互信息的BCEWITHLOGITLOSS 的 计算，可以考虑加激活函数demand_score \in [0,1]
+            demand_score = t.relu(demand_score)  
             demand_score_candidate = t.relu(demand_score_candidate)
         elif self.score_act_fun == 'sigmoid':
             demand_score = t.sigmoid(demand_score)
