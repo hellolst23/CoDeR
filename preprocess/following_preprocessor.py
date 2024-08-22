@@ -2,18 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # @File    : following_preprocessor.py
-"""
-Desc:
-接着 taobao/tmall/tafeng_preprocessor.py 继续处理
-即：将存的数据文件接口保持与SR-GNN一致，
-train.txt: tuple ([[session_0],...,[session_n]],[target_0, ..., target_n])
-train_c.txt: tuple([[session_c_0],...,[session_c_n]],[target_c_0, ..., target_c_n])
-test.txt, test_c.txt 与train， train_c 同
-item_catgy.txt: list, [[item_id,...],[category_id,...]]
-item_catgy_dict.txt: dict{item_id：category_id, ...}
-"""
-# todo 目前检查了一遍，following_preprocessor.py 没有问题 2021年1月14日
-# todo ！！！ following_preprocessor.py 中，item_catgy.txt 中 类别对应的item 从 （0，0） 开始的，item_catgy.pkl 中类别对应的item 从1开始的，（1， 1_catgy）
+
+
 
 import os
 import pickle
@@ -23,7 +13,6 @@ import json
 
 def fun(df):
     '''
-    转成（session_items_list, target_lsit）
     Args:
         df: DataFrame
 
@@ -42,11 +31,7 @@ def fun(df):
     return (sess_list_i, tar_i), (sess_list_c, tar_c)
 
 def following_preprocessor(dir):
-    '''
-    Args:
-        dir: 读取文件的根目录
-    Returns:
-    '''
+
     print('------------------start reading------------------')
     tra_path = os.path.join(dir, 'session_train.pkl')
     tes_path = os.path.join(dir, 'session_test.pkl')
@@ -60,7 +45,7 @@ def following_preprocessor(dir):
         items_catgies = pickle.load(f3) # list
     with open(sess_info_path, 'r') as f4:
         sess_info = json.loads(f4.read())
-    n_item = sess_info['num_of_item[not include 0]'] # n_item: 数据集中所有的item id 数，不包括[0]
+    n_item = sess_info['num_of_item[not include 0]']
     items_catgies.insert(0,0)
     tra_df = pd.DataFrame(tra_list, columns=title)
     tes_df = pd.DataFrame(tes_list, columns=title)
@@ -88,6 +73,5 @@ if __name__ == '__main__':
     #dir = '../datasets/tafeng_2'
     train_file_path = os.path.join(dir,'session_train.pkl')
     test_file_path = os.path.join(dir, 'session_test.pkl')
-    #n_item: 数据集中所有的item id 数，不包括[0]
     following_preprocessor(dir)
     print('done')
