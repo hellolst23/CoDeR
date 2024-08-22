@@ -45,7 +45,6 @@ def get_params():
                         type=int, 
                         default=128, 
                         help='input batch size')
-    # model 超参
     parser.add_argument('--hidden_size', 
                         type=int, 
                         default=160, 
@@ -55,20 +54,20 @@ def get_params():
                         default=0.1, 
                         help='hyper-parameter, to balance the impact between '
                         'info_max loss and click loss')
-    # model 结构超参1
+
     parser.add_argument('--n_demand', type=int, default=2, help='the number of demands in a session')
     # parser.add_argument('--dashed_order', type=int, default=2, help='the size of sliding window for construction the '
     #                                                                 'dashed adjacent matrix  ')
     # parser.add_argument('--n_gnn_layer', type=int, default=1, help='the number of gnn layer')
     #
-    # model 结构超参3
+
     # parser.add_argument('--graph_aggregation', type=str, default='mean',
     #                     help='method to aggregate the graph, lstm, mean, '
     #                          'sum...')
     # parser.add_argument('--rs', type=str, default='dot', help='dot/mlp, p_v_s_d calculation method in RS part')
     parser.add_argument("--nonhybrid", type=bool, default=False, help=" true：don't use the last item， false：use the last item")
 
-    # loss 超参
+
     parser.add_argument('--n_negative', type=int, default=3,
                         help='the negative samples in Loss function, if n_negative=0, it represents not carrying negative strategy')
 
@@ -190,20 +189,20 @@ def main():
     elif opt.loss_name == 'bpr':
         criterion = BPRLoss(log_path_txt, opt.sample_strategy)
 
-    # optimizer = optim.Adam(model.parameters(), opt.lr)# 没迭代之前，用的这一行优化器
+    # optimizer = optim.Adam(model.parameters(), opt.lr)
 
     # scheduler = StepLR(optimizer, step_size=opt.lr_dc_step, gamma=opt.lr_dc)
     # optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
 
-    # 之前的第四章,17.几的值
+
     # rec_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
     # catgy_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
-    if opt.catgy_lamda <=0: # 第三章
+    if opt.catgy_lamda <=0: 
         rec_optimizer = optim.Adam(model.parameters(), lr=0.001)
         # rec_optimizer = optim.Adam(model.parameters(), lr=0.001,weight_decay=0, amsgrad=True)
         catgy_optimizer = optim.Adam(model.parameters(), lr=0.001)
         # catgy_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
-    if opt.catgy_lamda > 0:  # 第四章
+    if opt.catgy_lamda > 0:  
         rec_optimizer = optim.Adam(model.parameters(), lr=0.001)
         catgy_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
 
@@ -235,7 +234,7 @@ def main():
 
         # gnn_node_representation visualization
         # gnn_node_representation: batch_size * n_demand * max_nodes_len * embedding_dim_node
-        last_batch_size, max_node_len = gnn_node_representation.shape[0], gnn_node_representation.shape[-2] # for 循环溢出的时最后一个batch数据，数据量不一定等于batch_size
+        last_batch_size, max_node_len = gnn_node_representation.shape[0], gnn_node_representation.shape[-2] 
         label_demand = []
         for i in range(opt.n_demand):
             label_demand += [i] * max_node_len
@@ -261,7 +260,7 @@ def main():
         """
         # ************************************************ test
         # **************************************************************
-        # model 加载代码
+   
 
         # ckpt = torch.load(os.path.join(log_dir_train_checkpoint,f"epoch{epoch}_checkpoint.pth.tar"))
         # model.load_state_dict(ckpt['state_dict'])
@@ -333,7 +332,7 @@ def main():
 
         # scheduler.step(epoch=epoch)
         # early stop judgement
-        bad_counter += 1 - flag  # 在各个评价指标上共出现opt.patience 次坏的结果，
+        bad_counter += 1 - flag  
         if bad_counter >= opt.patience:
             break
 
@@ -363,17 +362,17 @@ if __name__ == '__main__':
         main(params)
     main()
 
-    # todo 加载的模型预测值和 训练时的预测值不一样， 但是直接在main函数中加载是一样的
+
     # def load_optimal_model():
     #
-    #     # todo 更改 最优模型的epoch， 以及所在目录 log_dir_train_checkpoint
+    #     
     #     epoch = 1  # tmall:3 , tafeng:
     #     log_dir_train_checkpoint = "./checkpoint/tafeng"
     #         # ./checkpoint/tafeng
     #
     #     time_path = time.strftime("%y%m%d-%H%M%S", time.localtime(time.time()))
     #     log_dir_train = os.path.join('./visual', opt_temp.dataset, 'DemandRS',
-    #                                  f"加在最优模型测试_{time_path}_{opt_temp.beizhu1}")
+    #                                  f"_{time_path}_{opt_temp.beizhu1}")
     #     log_path_txt = os.path.join(log_dir_train, "output.txt")
     #     opt_temp.log_path_txt = log_path_txt
     #
@@ -399,7 +398,6 @@ if __name__ == '__main__':
     #     Ks = [10, 20, 40, 50, 60, 80, 100]
     #     Ks_auc = [50, 100, 200, 500]
     #
-    #     # model 加载代码
     #     ckpt = torch.load(os.path.join(log_dir_train_checkpoint,f"epoch{epoch}_checkpoint.pth.tar"))
     #
     #     model = DemandAwareRS(opt_temp.n_node, opt_temp.n_node_c, opt_temp)
@@ -413,7 +411,6 @@ if __name__ == '__main__':
     #     recall, mrr, ndcg, auc, info_loss, click_loss, rs_loss = test(opt,epoch, model, criterion, test_loader, opt_temp.lamda,
     #                                                                   item_category, device, Ks)
     #
-    #     # 打印测试结果
     #     cprint(log_path_txt, f'Current Result Epoch {epoch}:')
     #     print_result(log_path_txt, 'Recall', recall, Ks)
     #     print_result(log_path_txt, 'MRR', mrr, Ks)
