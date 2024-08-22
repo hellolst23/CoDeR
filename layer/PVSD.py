@@ -9,7 +9,6 @@ calculate P(v: s, d) in RS part
 from layer import *
 from util.utils import timefn
 
-# BatchNormal 批量正则化 映射到均值为 0 ，方差为 1 的正态分布
 class PVSD(nn.Module): 
     def __init__(self, hidden_size, batchNorm = 'feature', n_demand=2, rs='dot'):
         """
@@ -81,14 +80,12 @@ class PVSD(nn.Module):
 
         elif self.rs == 'dot':
             """
-            20210328 之前的版本， 加last item
             hidden = self.nn_linear1(sess_represenation)  # batch_size * n_demand * hidden_size
             hidden = hidden.unsqueeze(-2)  # batch_size * n_demand * 1 * hidden_size
             hidden = self.batch_norm_custom(hidden)  # batch_size * n_demand * 1 * hidden_size
             hidden = self.act_func(hidden) # batch_size * n_demand * 1 * hidden_size
             # candidate_items_embedding: batch_size * n_demand * (n_item+1) *  hidden_size
             p_v_s_d = torch.matmul(candidate_items_embedding, hidden.transpose(-1,-2)).squeeze(-1)  # batch_size * n_demand * (n_item+1)
-            # todo 这里考虑是否要加一个激活函数 Relu，然后再到loss中经过softmax
             """
 
             hidden = sess_represenation[:,:,:self.hidden_size]  # batch_size * n_demand * hidden_size
