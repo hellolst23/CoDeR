@@ -201,7 +201,7 @@ def main(args):
                                                                         train_loader, item_category, device, epoch, opt)
         # gnn_node_representation visualization
         # gnn_node_representation: batch_size * n_demand * max_nodes_len * embedding_dim_node
-        last_batch_size, max_node_len = gnn_node_representation.shape[0], gnn_node_representation.shape[-2] # for 循环溢出的时最后一个batch数据，数据量不一定等于batch_size
+        last_batch_size, max_node_len = gnn_node_representation.shape[0], gnn_node_representation.shape[-2] 
         label_demand = []
         for i in range(opt.n_demand):
             label_demand += [i] * max_node_len
