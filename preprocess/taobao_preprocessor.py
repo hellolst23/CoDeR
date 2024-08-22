@@ -6,22 +6,6 @@ preprocess taobao dataset
 1) a session is a list ['user_id', 'start_time', 'end_time', 'item_list', 'category_list', 'target_item', 'target_category']
 2) item_catgy.pkl: save categories corresponding to item id starting from 1.
 """
-"""
-数据处理步骤：
-1. 删除有缺失值的行(一般没有缺失值)
-2. 删除当前items 和 类别 出现次数小于5的 数据（DataFrame 中的rows）
-3. 对 user, item, category id重新编码
-4. 划分数据，删除长度< 2的 session
-5, 划分训练集和测试集，最近的 20% session 作为测试集
-6， 训练集和测试集分别存为.pkl文件
-"""
-#todo
-"""
-Note: 数据处理可以再加几个步骤
-1）item<5 过滤完之后，再过滤一遍session长度小于2
-2）test 中的item要出现在训练集合中
-3）单session 划分成多个session，在划分完训练集和测试集后
-"""
 
 
 import csv
@@ -94,15 +78,6 @@ def filter_items(df_data, minimum_occurrence):
 
 
 def split_train_test(sess_list, train_size):
-    '''
-    split train dataset and test dataset by session start time. The latest 20% sessions are the test dataset.
-    Args:
-        sess_list: taobao_preprocessor() 的返回值
-        [(user_id,start_time,end_time,item_list,category_list,target_item,target_category)]
-
-    Returns: train_list, test_list
-
-    '''
     df = pd.DataFrame(sess_list,
                       columns=['user_id', 'start_time', 'end_time', 'item_list', 'category_list', 'target_item',
                                'target_category'])
@@ -137,14 +112,14 @@ def taobao_preprocessor(file_path, save_path, time_interval,minimun_session_leng
                        nrows=nrows)
     print("-----------------------Read csv finished.-------------------------@ %ss" % datetime.datetime.now())
     data['timestamp'] = pd.to_datetime(data['timestamp'], unit='s')
-    print(data.isnull().all())  # 判断每一列是否有缺失值
-    # data.dropna(axis=1, how='any', inplace=True) #判断一下数据是否有缺失值，有的删掉
+    print(data.isnull().all())  
+    # data.dropna(axis=1, how='any', inplace=True) 
 
     print(Counter(data['behavior_type']))
-    data_buy = data[(data['behavior_type'].isin(['buy']))] # NOTE: 新加的 只要buy的数据
+    data_buy = data[(data['behavior_type'].isin(['buy']))] 
     print(Counter(data_buy['behavior_type']))
 
-    # NOTE：根据用户id 随机选取部分数据
+
     
 
     # Filter item and category id
@@ -154,10 +129,10 @@ def taobao_preprocessor(file_path, save_path, time_interval,minimun_session_leng
     user_encoder = LabelEncoder()
     item_encoder = LabelEncoder()
     category_encoder = LabelEncoder()
-    data['user_id'] = user_encoder.fit_transform(data['user_id'])  # fit_transform()返回array
-    data['item_id'] = item_encoder.fit_transform(data['item_id']) + 1  # 编码从1开始，适应sr-gnn的源码，这样后面session补成定长的时候可以区分开来
+    data['user_id'] = user_encoder.fit_transform(data['user_id'])  
+    data['item_id'] = item_encoder.fit_transform(data['item_id']) + 1  
     data['category_id'] = category_encoder.fit_transform(data['category_id']) + 1
-    num_of_user = len(user_encoder.classes_)  # user_encoder.classes_记录未编码前的类别，ndarray
+    num_of_user = len(user_encoder.classes_)  
     num_of_item = len(item_encoder.classes_)
     num_of_category = len(category_encoder.classes_)
     # Get category id for all the items
@@ -168,8 +143,8 @@ def taobao_preprocessor(file_path, save_path, time_interval,minimun_session_leng
     # Group by user id
     global TIME_INTERVAL, MAXIMUM_LENGTH,MINIMUM_SESSION_LENGTH
     TIME_INTERVAL = time_interval
-    MAXIMUM_LENGTH = maximum_length  # 最长session长度
-    MINIMUM_SESSION_LENGTH = minimun_session_length  # 最短session长度
+    MAXIMUM_LENGTH = maximum_length  
+    MINIMUM_SESSION_LENGTH = minimun_session_length  
     print('---------------Start splitting sessions--------------------')
     # Multiprocessing
     with Pool(works) as p:
