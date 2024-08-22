@@ -76,7 +76,7 @@ class DemandAwareRS(nn.Module):
             file_write(self.log_path_txt, 'There is GNN part')
         self.gnn_layer = MeanGNN(config, config.n_demand, self.dim_coefficient * config.embedding_dim_i, config.dashed_order, config.bias,
                                  config.non_linear, config.non_linear_demand_score, config.demand_share_agg,
-                                 config.demand_share_node)  # TODO: How many layer to use?
+                                 config.demand_share_node)  
         self.graph_aggregation_method = config.graph_aggregation
 
         if config.graph_aggregation == 'lstm':
