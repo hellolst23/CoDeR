@@ -4,7 +4,7 @@
 
 # @File    : data_analysis.py
 # Desc:
-分析数据集的各个特性
+
 """
 import os
 import pickle
@@ -14,11 +14,7 @@ import pandas as pd
 import numpy as np
 
 def load_data(dir):
-    """
-        Args:
-            dir: 读取文件的根目录
-        Returns:
-    """
+
     print('------------------ start reading ------------------')
     tra_path = os.path.join(dir, 'session_train.pkl')
     tes_path = os.path.join(dir, 'session_test.pkl')
@@ -37,7 +33,6 @@ def load_data(dir):
 
 def data_analysis(tra_list, tes_list, items_catgies, sess_info):
     """
-    输入为load_data的输出
     Args:
         tra_list:
         tes_list:
@@ -71,11 +66,7 @@ def data_analysis(tra_list, tes_list, items_catgies, sess_info):
 
 
 def load_data_txt(dir):
-    """
-        Args:
-            dir: 读取文件的根目录
-        Returns:
-    """
+
     print('------------------ start reading ------------------')
     tra_path = os.path.join(dir, 'train.txt')
     tra_path_c = os.path.join(dir, 'train_c.txt')
