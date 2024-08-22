@@ -65,7 +65,6 @@ class Linear3D(nn.Module):
         )
 
 if __name__ == "__main__":
-    # Linear3D 测试代码
     m = Linear3D(2,10,20)
     a = torch.ones(6,2,15,10)
     b = m(a)
