@@ -2,7 +2,6 @@
 """
 # @File    : loss.py
 # Desc:
-    loss 函数类
 """
 import torch
 import torch.nn as nn
@@ -17,7 +16,7 @@ from util.utils import file_write
 #     def __init__(self, log_path_txt, n_negative,sample_stategy='random', beta=1):
 #         """
 #         Args:
-#             log_path_txt: 存输出结果的路径
+#             log_path_txt: .
 #             n_negative:
 #             sample_strategy = 'random'  # type=str 'random', 'category', sample strategy for negative samples
 #             beta: float, default=1.0, balance the negative sample
@@ -102,7 +101,7 @@ class Loss_Diy(nn.Module):
     def __init__(self, opt, log_path_txt, sample_stategy='random', beta=1):
         """
         Args:
-            log_path_txt: 存输出结果的路径
+            log_path_txt: .
             n_negative:
             sample_strategy = 'random'  # type=str 'random', 'category', sample strategy for negative samples
             beta: float, default=1.0, balance the negative sample
@@ -129,7 +128,7 @@ class Loss_Diy(nn.Module):
             info_loss: torch.Tensor,  a scalar, the info_max loss
             l2_loss: torch.Tensor,  a scalar, the L2 regularization loss
             result_click: torch.Tensor， batch_size * n_items
-            target: torch.Tensor, batch_size, 1维
+            target: torch.Tensor, batch_size
             neg_sample: torch.Tensor, batch_size * n_negative, dtype=torch.long
 
         Returns:
@@ -150,16 +149,15 @@ class Loss_Diy(nn.Module):
         # NOTE：正常loss
         rs_loss = click_loss + self.info_lamda * info_loss + l2_loss  
         # rs_loss = click_loss + self.info_lamda * info_loss + l2_loss + 0 * demand_sim_loss
-        # NOTE: 加catgy 预测的loss
         if self.catgy_lamda > 0 :
             catgy_loss = self.catgy_lamda * self.catgy_task_loss(catgy_click, target_catgy)
         else:
             catgy_loss = self.catgy_task_loss(catgy_click, target_catgy)
 
 
-            # rs_loss += catgy_loss # todo catgy loss 是否训练
+
         # print(f"catgy_loss:  {catgy_loss}")
-        return rs_loss, click_loss, catgy_loss # NOTE： return 没有加了权重的catgy loss
+        return rs_loss, click_loss, catgy_loss 
 
 
     def add_neg_loss(self, result_click, target_item, neg_sample=None):
@@ -215,11 +213,11 @@ class BPRLoss(nn.Module):
     def forward(self, lamda, info_loss,l2_loss,  result_click, target, neg_sample=None):
         """
         compute BPR loss, reference: the bpr loss in BGCN
-        Note: 不同的loss function中均有额外附带 info-loss 的那一部分
+
         Args:
             l2_loss: torch.Tensor,  a scalar, the L2 regularization loss
             result_click: torch.Tensor， batch_size * n_items
-            target: torch.Tensor, batch_size, 1维, dtype=torch.long
+            target: torch.Tensor, batch_size, dtype=torch.long
             neg_sample: torch.Tensor, batch_size * 1, dtype=torch.long
         Returns:
             click_loss: torch.Tensor,  a scalar, the click loss
@@ -230,7 +228,7 @@ class BPRLoss(nn.Module):
         pos_score = result_click[torch.arange(batch_size), target]  # batch_size
 
         if neg_sample is None:  # model test
-            click_loss = torch.mean( - torch.log(pos_score))  # 用的依旧是交叉熵loss 在测试计算click loss 时
+            click_loss = torch.mean( - torch.log(pos_score))  
         else:# model train
             neg_score = result_click[torch.arange(batch_size), neg_sample.squeeze(-1)]
             # BPR loss
