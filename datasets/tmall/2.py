@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 """
-@author:lifx1
 @file:2.py
-@time:2022/02/21
 """
 import pickle
 
