@@ -15,14 +15,13 @@ class MeanGNN(Module):
     def __init__(self,config, n_demand, embedding_dim_node, dashed_order, bias=True, non_linear='relu', non_linear_demand_score='sigmoid', demand_share_agg=False,demand_share_node=False, node_out=True):
         super(MeanGNN, self).__init__()
         '''
-        实边和虚边邻居加权平均， 与原结点拼接，再过全连接层，即一次卷积，只有一个MLP 的参数
         Args:
             n_demand: number of the demand
             embedding_dim_node: embedding dimension of the node
             dashed_order: order of the dashed edges, 1 means only the solid edges are available
-            demand_share_agg: bool, demand 的在gcn 邻居聚合时，是否共享参数
-            demand_share_node: bool, demand的节点更新时，是否共享参数
-            node_out: bool, 聚合是否考虑出度的邻居
+            demand_share_agg: bool
+            demand_share_node: bool
+            node_out: bool
         '''
         self.n_demand = n_demand
         self.dashed_order = dashed_order
@@ -34,7 +33,7 @@ class MeanGNN(Module):
         if demand_share_node:
             self.gnn_weight = nn.Linear((dashed_order+1)*embedding_dim_node, embedding_dim_node,bias=bias)
         else:
-            self.gnn_weight = Linear3D(self.n_demand, (dashed_order+1)*embedding_dim_node, embedding_dim_node, bias=bias) # demand 更新参数不共享
+            self.gnn_weight = Linear3D(self.n_demand, (dashed_order+1)*embedding_dim_node, embedding_dim_node, bias=bias) 
 
         # Discriminator
         self.f_k = nn.Bilinear(embedding_dim_node, embedding_dim_node, 1)
@@ -42,9 +41,7 @@ class MeanGNN(Module):
         self.weight_init()
 
     def weight_init(self):
-        '''
-        初始化该layer自己定义而非子模块的参数
-        '''
+
         # raise NotImplementedError
         return None
 
@@ -57,7 +54,7 @@ class MeanGNN(Module):
         Returns:
             nodes_weight: torch.tensor, batch_size * n_demand * max_nodes_len * 1
         """
-        # nodes_categories_matrixes 按行归一化
+
         nodes_categories_matrixes = self.normalize_matrix(
             nodes_categories_matrixes)  # batch_size * max_nodes_len* max_session_len
         nodes_categories_matrixes = nodes_categories_matrixes.unsqueeze(
@@ -98,24 +95,13 @@ class MeanGNN(Module):
         weight_demand_emb = nodes_weight * demand_session_node  # Bind weight to demand node emb, batch_size * n_demand * max_nodes_len * embedding_dim_node
         order_emb_output = []  # GNN output for each order
         adj_matrixes = adj_matrixes.permute(0, 2, 1).float()  # adj: target * source， a_ij: j->i
-        k_order_matrix = adj_matrixes  # 原始邻接矩阵，存存储邻接关系，batch_size * max_nodes_len * max_nodes_len, 从行看，表示入度，列看表示出度
-        # obtain dashed_edges_weight and 邻居节点表示之和
+        k_order_matrix = adj_matrixes 
         for i in range(self.dashed_order):
             # Solid edges
             if i == 0:
-                normalize_k_matrix_in = self.normalize_matrix(k_order_matrix)  # 按照节点的入度正则, batch_size * max_node_len * max_node_len
+                normalize_k_matrix_in = self.normalize_matrix(k_order_matrix) 
                 gnn_output = t.matmul(normalize_k_matrix_in.unsqueeze(1),weight_demand_emb) # batch_size * n_demand * max_nodes_len * embedding_dim_node
-                """
-                # 出度的情况暂时不管
-                
-                # 计算入度的节点邻居, batch_size * n_demand * max_nodes_len * embedding_dim_node
-                # Note: 由于k_order_matrix已经按照入度正则，所以不需要再进行平均
-                if self.node_out:
-                    k_order_matrix_out = k_order_matrix.transpose(2, 1)
-                    normalize_k_matrix_out = self.normalize_matrix(k_order_matrix_out) # 按照节点的出度正则, batch_size * max_node_len * max_node_len
-                    gnn_output_out = t.matmul(normalize_k_matrix_out.unsqueeze(1), weight_demand_emb) # batch_size * n_demand * max_nodes_len * embedding_dim_node
-                    gnn_output = torch.cat((gnn_output, gnn_output_out), dim=-1) # batch_size * n_demand * max_nodes_len * (embedding_dim_node*2)
-                """
+
             else:
                 k_order_matrix = (k_order_matrix @ adj_matrixes).clamp(0, 1)
                 normalize_k_matrix = self.normalize_matrix(k_order_matrix)
@@ -153,9 +139,8 @@ class MeanGNN(Module):
             order_emb_output.append(gnn_output)
         order_emb_output = torch.cat(order_emb_output, dim=-1) # batch_size * n_demand * max_nodes_len * (embedding_dim_node * order)
 
-        # 节点更新
         output = self.gnn_weight(torch.cat((demand_session_node, order_emb_output), dim=-1)) # batch_size * n_demand * max_nodes_len * embedding_dim_node
-        # output = self.gnn_weight(torch.cat((weight_demand_emb, order_emb_output), dim=-1))  # 与自身拼接的时候，带权重
+        # output = self.gnn_weight(torch.cat((weight_demand_emb, order_emb_output), dim=-1)) 
 
 
         if self.non_linear == 'relu':
@@ -187,7 +172,6 @@ class MeanGNN(Module):
         score = self.f_k(node_local_emb, graph_representation)  # batch_size * n_demand * max_nodes_len * 1
         score = torch.sigmoid(score/0.1) # todo: add sigmoid and temperature parameter
 
-        # 点积求互信息
         # graph_representation = graph_representation.unsqueeze(-1)
         # score = torch.matmul(node_local_emb, graph_representation)  # batch_size * n_demand * max_nodes_len * 1
 
