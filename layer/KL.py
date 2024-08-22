@@ -12,13 +12,11 @@ def kl_div(p_dis, q_dis, alpha=0.01):
     return KL_res
 
 def user_kl_score(training_set, validation_set, item_category, category_list):
-    # 将点击序列平均分成两部分
     items_list = training_set + validation_set
     items_len = len(items_list)
     training_set_1 = items_list[:items_len//2]
     training_set_2 = items_list[items_len//2:]
     
-    # 计算两部分的类别分布
     training_set_1_dis = [0] * len(category_list)
     for itemID in training_set_1:
         categories = item_category[itemID]
@@ -33,7 +31,6 @@ def user_kl_score(training_set, validation_set, item_category, category_list):
             training_set_2_dis[cate] += round(1.0/len(categories), 4)
     training_set_2_dis = [x/len(training_set_2) for x in training_set_2_dis]
     
-    # 计算KL散度
     kl_res_1 = kl_div(training_set_1_dis, training_set_2_dis)
     kl_res_2 = kl_div(training_set_2_dis, training_set_1_dis)
     
@@ -56,8 +53,6 @@ def get_kl_score(training_set_index, validation_set_index, item_category, catego
     min_kl_score = 999
     kl_score_set = np.zeros(len(training_set_index), dtype=float)
     for userID in range(len(training_set_index)):
-        # 计算KL散度
-        # 去除补齐的0
         training_set = []
         for i in training_set_index[userID]:
             if i != 0:
@@ -77,13 +72,11 @@ def get_kl_score(training_set_index, validation_set_index, item_category, catego
     return kl_score_set, avarage_kl_score, max_kl_score, min_kl_score
 
 # if __name__ == "__main__":
-#     # 测试代码
 #     # user_kl_score = {}
 #     train_set = [1,2,3,5,6]
 #     valid_set = [3,4]
 #     item_category = {1:[1,5,6] , 2:[5], 3:[2,5], 4:[2,6], 5:[3], 6:[1,6]}
 
-#     # kl_score计算只使用类别数量的长度 len(category_list)
 #     category_list = ['Animation',"Children's" ,'Comedy' ,'Adventure' ,'Fantasy' ,'Romance', 'Drama'
 #                     'Action', 'Crime' ,'Thriller' ,'Horror', 'Sci-Fi' ,'Documentary','War'
 #                     'Musical','Mystery','Film-Noir','Western'] 
