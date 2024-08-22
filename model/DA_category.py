@@ -29,7 +29,6 @@ class DemandAwareRS(nn.Module):
             n_categories:
             config:
         """
-        # 下面注释 n_item + 1 = n_items
         super(DemandAwareRS, self).__init__()
         self.recommend_model = config.recommend_model
         self.softmax_demand_score_candidate = config.softmax_demand_score_candidate
@@ -127,12 +126,11 @@ class DemandAwareRS(nn.Module):
         # hidden: batch_size * n_demand * max_nodes_len * embedding_dim_node,
         last_item_info = hidden.transpose(2, 1)[torch.arange(
             len(session_last_item_index)), session_last_item_index]  # batch_size * n_demand * embedding_dim_node
-        # todo 这里不同的demand 对应的全连接参数共享
 
         if self.gnn_mask:
             a = torch.matmul(mask_node.view(batch_size, 1, 1, max_nodes_len).float(), hidden).squeeze(
                 -2)  # batch_size * n_demand * embedding_dim_node
-            a = a.div(mask_node.sum(1).unsqueeze(-1).unsqueeze(-1))  # NOTE: 取均值
+            a = a.div(mask_node.sum(1).unsqueeze(-1).unsqueeze(-1))  
             graph_representation = a
         else:
             q1 = self.linear_one(last_item_info).unsqueeze(2)  # batch_size * n_demand * 1 * embedding_dim_node
@@ -161,13 +159,13 @@ class DemandAwareRS(nn.Module):
         # if self.p_v_compute = config.p_v_computedemand_score_candidate
         P_v = t.sum(P_v_s_d * demand_score_candidate, dim=1)  # Batch_size  * (n_item+1) # todo
         # batch_size * n_demand * n_items
-        # P_v = t.sum(P_v_s_d +  demand_score_candidate, dim=1) # NOTE： 改成了相加
+        # P_v = t.sum(P_v_s_d +  demand_score_candidate, dim=1)
         return P_v, graph_representation
 
     def recommend_demand(self, hidden, demand_score_candidate, category_candidadte, session_last_item_index, mask_node,
                          batch_size):
         """
-        This recommend part 按照自己写的公式
+
         Args:
             hidden: torch.Tensor, dtype=torch.int64, batch_size * n_demand * max_nodes_len * embedding_dim_node, node representation after gnn layer
             demand_score_candidate: torch.Tensor, dtype=torch.float32  batch_size * n_demand * n_items
@@ -263,7 +261,6 @@ class DemandAwareRS(nn.Module):
                 gnn_input = self.gnn_layer(gnn_input, adj, demand_score, nodes_categories)
             gnn_node_representation = gnn_input  # for visualization, batch_size * n_demand * max_nodes_len * (2 embedding_dim_node)
 
-        # 计算 L2 loss
         l2_loss = self.regularize(gnn_input, mask_node)
 
         if self.recommend_model == 'sr_gnn':
@@ -337,7 +334,6 @@ class DemandAwareRS(nn.Module):
                                                 embedding_dim_node)  # Reshape for parallelization
             _, (graph_representation, _) = self.graph_aggregator(
                 gnn_input_reshape)  # Get the last state, (batch_size * n_demand) * 1 * embedding_dim_node
-            # fixme 我测出来是 1 * (batch_size * n_demand) * embedding_dim_node
             graph_representation = graph_representation.view(batch_size, n_demand, embedding_dim_node)
         elif self.graph_aggregation_method == 'mean':
             graph_representation = torch.matmul(mask_nodes.view(batch_size, 1, 1, max_nodes_len), gnn_result).squeeze(
@@ -388,7 +384,7 @@ if __name__ == '__main__':
     # Test model
     import test_config as config
 
-    model = DemandAwareRS(n_items=32, n_categories=36, config=config)  # n_items: 算补的0
+    model = DemandAwareRS(n_items=32, n_categories=36, config=config)  
 
     sess_nodes = t.LongTensor(torch.arange(1, 31).view(5, 6))  # batch_size=5, max_nodes_len=6
     sess_categories = t.LongTensor(torch.arange(1, 36, ).view(5, 7))  # max_session_len=7
