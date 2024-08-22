@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 """
-@author:lifx1
 @file:1.py
 """
 import pickle
