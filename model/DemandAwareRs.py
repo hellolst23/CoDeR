@@ -24,7 +24,6 @@ class DemandAwareRS(nn.Module):
             n_categories:
             config:
         """
-        # 下面注释 n_item + 1 = n_items
         super(DemandAwareRS, self).__init__()
         self.recommend_model = config.recommend_model
 
@@ -52,11 +51,11 @@ class DemandAwareRS(nn.Module):
         else:
             file_write(self.log_path_txt, 'There is GNN part')
         self.gnn_layer = GNN(config, config.n_demand, config.embedding_dim_i, config.dashed_order, config.bias,
-                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node)  # TODO: How many layer to use?
+                             config.non_linear, config.non_linear_demand_score, config.demand_share_agg, config.demand_share_node)  
         self.graph_aggregation_method = config.graph_aggregation
 
         if config.graph_aggregation == 'lstm':
-            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True) #todo 不知道后面补的0对其是否有影响
+            self.graph_aggregator = nn.LSTM(config.embedding_dim_i, config.embedding_dim_i, batch_first=True)
 
         self.p_v_s_d = PVSD(config.embedding_dim_i,config.batch_norm,config.n_demand, config.rs)
 
@@ -105,11 +104,11 @@ class DemandAwareRS(nn.Module):
 
         hidden = alpha * hidden #  batch_size * n_demand * max_nodes_len * embedding_dim_node
         a = torch.matmul(mask_node.view(batch_size,1,1,max_nodes_len).float(), hidden).squeeze(-2) # batch_size * n_demand * embedding_dim_node
-        graph_representation = a # todo 互信息计算，不能加入补的0，因为graph 聚合时也没有加
+        graph_representation = a 
 
         if not self.nonhybrid:
             a = self.linear_transform(torch.cat([a, last_item_info], dim=-1))
-        # b_i = self.embedding.weight[1:]  # n_nodes x latent_size，这里把数据集合中所有的item都当成candidate sets
+        # b_i = self.embedding.weight[1:] 
         b = self.embedding_i.weight.unsqueeze(0).unsqueeze(0).repeat(batch_size, self.n_demand, 1,1)
         # include 0, Batch_size * n_demand * (n_item) * embedding_dim_node
 
@@ -123,7 +122,6 @@ class DemandAwareRS(nn.Module):
 
     def recommend_demand(self, hidden, demand_score_candidate, session_last_item_index, mask_node, batch_size):
         """
-        This recommend part 按照自己写的公式
         Args:
             hidden: torch.Tensor, dtype=torch.int64, batch_size * n_demand * max_nodes_len * embedding_dim_node, node representation after gnn layer
             demand_score_candidate: torch.Tensor, dtype=torch.float32  batch_size * n_demand * n_items
@@ -185,7 +183,6 @@ class DemandAwareRS(nn.Module):
                 gnn_input = self.gnn_layer(gnn_input, adj, demand_score, nodes_categories)
             gnn_node_representation = gnn_input  # for visualization, batch_size * n_demand * max_nodes_len * embedding_dim_node
 
-        # 计算 L2 loss
         l2_loss = self.regularize(gnn_input, mask_node)
 
         if self.recommend_model == 'sr_gnn':
@@ -198,7 +195,7 @@ class DemandAwareRS(nn.Module):
 
 
 
-    def compute_score(self, session_representation,demand_score_candidate, batch_size): #todo Recommendation 这一块没有仔细检查
+    def compute_score(self, session_representation,demand_score_candidate, batch_size): 
         """
         compute P_v
         Args:
@@ -236,7 +233,6 @@ class DemandAwareRS(nn.Module):
             gnn_input_reshape = gnn_result.view(batch_size * n_demand, max_nodes_len,
                                                 embedding_dim_node)  # Reshape for parallelization
             _, (graph_representation, _)= self.graph_aggregator(gnn_input_reshape)  # Get the last state, (batch_size * n_demand) * 1 * embedding_dim_node
-            #fixme 我测出来是 1 * (batch_size * n_demand) * embedding_dim_node
             graph_representation = graph_representation.view(batch_size, n_demand, embedding_dim_node)
         elif self.graph_aggregation_method == 'mean':
             graph_representation = torch.matmul(mask_nodes.view(batch_size,1,1,max_nodes_len), gnn_result).squeeze(-2)  # batch_size * n_demand * embedding_dim_node
@@ -247,7 +243,6 @@ class DemandAwareRS(nn.Module):
 
     def regularize(self, gnn_result, mask_nodes):
         """
-        References: BGCN , 对最终预测前的embedding做 L2 正则,
         Args:
             gnn_result: item emb after gnn, batch_size * n_demand * max_nodes_len * embedding_dim_node
             mask_nodes: torch.Tensor, dtype=torch.int64, batch_size * max_nodes_len, record the clicked nodes in a session
@@ -286,7 +281,7 @@ if __name__ == '__main__':
     # Test model
     import test_config as config
 
-    model = DemandAwareRS(n_items=32, n_categories=36, config=config) #n_items: 算补的0
+    model = DemandAwareRS(n_items=32, n_categories=36, config=config)
 
     sess_nodes = t.LongTensor(torch.arange(1, 31).view(5, 6))  # batch_size=5, max_nodes_len=6
     sess_categories = t.LongTensor(torch.arange(1, 36, ).view(5, 7))  # max_session_len=7
