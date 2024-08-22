@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 # @File    : main.py
-
 """
-#todo !!! Note: load data之后，item_catgy 首行为（0，0）
+
 
 import argparse
 from ast import parse
@@ -13,7 +12,7 @@ import os
 import argparse
 import logging
 
-# 自动调参
+
 import nni
 from nni.utils import merge_parameter
 
@@ -46,26 +45,25 @@ def get_params():
 
     """
     parser = argparse.ArgumentParser(description='parameters by nni set')
-    parser.add_argument("--dataset", type=str, default="tafeng_0117")#tmall_minoccur30_0321")
+    parser.add_argument("--dataset", type=str, default="tafeng_0117")# tmall_minoccur30_0321")
     parser.add_argument('--batch_size', type=int, default=128, help='input batch size')
-    # model 超参
+
     parser.add_argument('--hidden_size', type=int, default=160, help='hidden state size ')
     parser.add_argument('--catgy_lamda', type=float, default=0.001, help='hyper-parameter, to balance the impact between '
                                                                  'info_max loss and click loss')
-    # model 结构超参1
     parser.add_argument('--n_demand', type=int, default=2, help='the number of demands in a session')
     # parser.add_argument('--dashed_order', type=int, default=2, help='the size of sliding window for construction the '
     #                                                                 'dashed adjacent matrix  ')
     # parser.add_argument('--n_gnn_layer', type=int, default=1, help='the number of gnn layer')
     #
-    # model 结构超参3
+
     # parser.add_argument('--graph_aggregation', type=str, default='mean',
     #                     help='method to aggregate the graph, lstm, mean, '
     #                          'sum...')
     # parser.add_argument('--rs', type=str, default='dot', help='dot/mlp, p_v_s_d calculation method in RS part')
-    # parser.add_argument("--nonhybrid", type=bool, default=False, help=" true：不用最后一个item， false：用最后一个item")
 
-    # loss 超参
+
+
     parser.add_argument('--drop_catgy', type=float, default=0.25)
     parser.add_argument('--drop_item', type=float, default=0.25)
     parser.add_argument('--n_negative', type=int, default=3,
@@ -74,7 +72,6 @@ def get_params():
     # parser.add_argument("--beta", type=float, default=1.0, help='hyper-parameter to balance negative samples and target sample in loss funciton')
     # parser.add_argument("--embed_l2", type=float, default=0.0001, help="l2 penalty such as [0.001, 0.0005, 0.0001, 0.00005, 0.00001]")
 
-    # 优化超参
     # parser.add_argument('--lr', type=float, default=0.001, help='learning rate')  # [0.001, 0.0005, 0.0001]
     # parser.add_argument('--lr_dc', type=float, default=0.1, help='learning rate decay rate')
     # parser.add_argument('--lr_dc_step', type=int, default=1,
@@ -208,7 +205,7 @@ def main(args):
         label_demand = []
         for i in range(opt.n_demand):
             label_demand += [i] * max_node_len
-        label_demand = label_demand * last_batch_size # 区分不同的demand
+        label_demand = label_demand * last_batch_size 
         if not opt.catgy_embedding:
             gnn_node_representation = gnn_node_representation.reshape(-1, opt.hidden_size)
             writer.add_embedding(gnn_node_representation, metadata=label_demand, global_step=epoch,
@@ -230,7 +227,6 @@ def main(args):
         """
         # ************************************************ test
         # **************************************************************
-        # model 加载代码
 
         # ckpt = torch.load(os.path.join(log_dir_train_checkpoint,f"epoch{epoch}_checkpoint.pth.tar"))
         # model.load_state_dict(ckpt['state_dict'])
@@ -287,7 +283,7 @@ def main(args):
 
         scheduler.step(epoch=epoch)
         # early stop judgement
-        bad_counter += 1 - flag  # 在各个评价指标上共出现opt.patience 次坏的结果，
+        bad_counter += 1 - flag  
         if bad_counter >= opt.patience:
             break
 
@@ -321,12 +317,11 @@ if __name__ == '__main__':
 
 
         epoch = 1  # tmall:3 , tafeng:
-        log_dir_train_checkpoint = "/home/ylq/git/seqRS/current/DemandRS/visual/tafeng_0117/DemandRS/210329-220729_key demand share L2正则-重要/checkpoint"
-            # "/home/ylq/git/seqRS/current/DemandRS/visual/tmall_minoccur30_0321/DemandRS/211123-151351_key demand share L2正则-重要/checkpoint"
+        log_dir_train_checkpoint = "current/DemandRS/visual/tafeng_0117/DemandRS/210329-220729_key demand share /checkpoint"
 
         time_path = time.strftime("%y%m%d-%H%M%S", time.localtime(time.time()))
         log_dir_train = os.path.join('./visual', opt_temp.dataset, 'DemandRS',
-                                     f"加在最优模型测试_{time_path}_{opt_temp.beizhu1}")
+                                     f"_{time_path}_{opt_temp.beizhu1}")
         log_path_txt = os.path.join(log_dir_train, "output.txt")
         opt_temp.log_path_txt = log_path_txt
 
@@ -352,7 +347,6 @@ if __name__ == '__main__':
         Ks = [10, 20, 40, 50, 60, 80, 100]
         Ks_auc = [50, 100, 200, 500]
 
-        # model 加载代码
         ckpt = torch.load(os.path.join(log_dir_train_checkpoint,f"epoch{epoch}_checkpoint.pth.tar"))
 
         model = DemandAwareRS(opt_temp.n_node, opt_temp.n_node_c, opt_temp)
@@ -366,7 +360,6 @@ if __name__ == '__main__':
         recall, mrr, ndcg, auc, info_loss, click_loss, rs_loss = test(epoch, model, criterion, test_loader, opt_temp.lamda,
                                                                       item_category, device, Ks)
 
-        # 打印测试结果
         cprint(log_path_txt, f'Current Result Epoch {epoch}:')
         print_result(log_path_txt, 'Recall', recall, Ks)
         print_result(log_path_txt, 'MRR', mrr, Ks)
