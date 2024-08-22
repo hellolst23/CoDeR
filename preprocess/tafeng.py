@@ -31,11 +31,11 @@ def load_tafeng(file_path, nrows=None):
 
 
 def tafeng_main():
-    #  预处理代码
+
     os.chdir('../')
     time_start = time.time()
     file_load = 'datasets/tafeng/ta_feng.csv'
-    saving_load = 'datasets/tafeng_exclude/'  # session 的长度最小为2，即除去target之后最小是1
+    saving_load = 'datasets/tafeng_exclude/'  
     data = load_tafeng(file_path=file_load, nrows=None)
     beizhu = 'exculde item not in train when process test data, sess_enhancement: False'
     base_preprocessor(data, saving_load, beizhu=beizhu, sess_enhancement=False, exclude_item=True, minimun_session_length=2, minimum_occurrence=5, time_interval= 60 * 60 * 24, maximum_length=50,
@@ -49,5 +49,5 @@ if __name__ == '__main__':
     #tafeng_main()
     #"""
     saving_dir = '../datasets/tafeng_exclude/'
-    following_preprocessor(saving_dir)  # 转成SR-GNN 的接口
+    following_preprocessor(saving_dir)  
     #"""
