@@ -8,7 +8,7 @@ import os
 import argparse
 import logging
 
-# 自动调参
+
 # import nni
 # from nni.utils import merge_parameter
 
@@ -44,31 +44,26 @@ def get_params():
     parser = argparse.ArgumentParser(description='parameters by nni set')
     parser.add_argument("--dataset", type=str, default="tmall") #tmall_minoccur30_0321") tafeng_0117
     parser.add_argument('--batch_size', type=int, default=128, help='input batch size')
-    # model 超参
     parser.add_argument('--hidden_size', type=int, default=100, help='hidden state size')
     parser.add_argument('--lamda', type=float, default=0.1, help='hyper-parameter, to balance the impact between '
                                                                  'info_max loss and click loss')
-    # model 结构超参1
     parser.add_argument('--n_demand', type=int, default=2, help='the number of demands in a session')
     # parser.add_argument('--dashed_order', type=int, default=2, help='the size of sliding window for construction the '
     #                                                                 'dashed adjacent matrix  ')
     # parser.add_argument('--n_gnn_layer', type=int, default=1, help='the number of gnn layer')
     #
-    # model 结构超参3
     # parser.add_argument('--graph_aggregation', type=str, default='mean',
     #                     help='method to aggregate the graph, lstm, mean, '
     #                          'sum...')
     # parser.add_argument('--rs', type=str, default='dot', help='dot/mlp, p_v_s_d calculation method in RS part')
     parser.add_argument("--nonhybrid", type=bool, default=False, help=" true：don't use the last item， false：use the last item")
 
-    # loss 超参
     parser.add_argument('--n_negative', type=int, default=3, # origin default: 3
                         help='the negative samples in Loss function, if n_negative=0, it represents not carrying negative strategy')
 
     parser.add_argument("--beta", type=float, default=1.0, help='hyper-parameter to balance negative samples and target sample in loss funciton')
     parser.add_argument("--embed_l2", type=float, default=0.0001, help="l2 penalty such as [0.001, 0.0005, 0.0001, 0.00005, 0.00001]")
 
-    # 优化超参
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')  # [0.001, 0.0005, 0.0001]
     parser.add_argument('--lr_dc', type=float, default=0.1, help='learning rate decay rate')
     parser.add_argument('--lr_dc_step', type=int, default=1,
@@ -177,20 +172,20 @@ def main():
     elif opt.loss_name == 'bpr':
         criterion = BPRLoss(log_path_txt, opt.sample_strategy)
 
-    # optimizer = optim.Adam(model.parameters(), opt.lr)# 没迭代之前，用的这一行优化器
+    # optimizer = optim.Adam(model.parameters(), opt.lr)
 
     # scheduler = StepLR(optimizer, step_size=opt.lr_dc_step, gamma=opt.lr_dc)
     # optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
 
-    # 之前的第四章,17.几的值
+ 
     # rec_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
     # catgy_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
-    if opt.catgy_lamda <=0: # 第三章
+    if opt.catgy_lamda <=0: 
         rec_optimizer = optim.Adam(model.parameters(), lr=0.001)
         # rec_optimizer = optim.Adam(model.parameters(), lr=0.001,weight_decay=0, amsgrad=True)
         catgy_optimizer = optim.Adam(model.parameters(), lr=0.001)
         # catgy_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
-    if opt.catgy_lamda > 0:  # 第四章
+    if opt.catgy_lamda > 0:  
         rec_optimizer = optim.Adam(model.parameters(), lr=0.001)
         catgy_optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0, amsgrad=True)
 
@@ -222,11 +217,11 @@ def main():
 
         # gnn_node_representation visualization
         # gnn_node_representation: batch_size * n_demand * max_nodes_len * embedding_dim_node
-        last_batch_size, max_node_len = gnn_node_representation.shape[0], gnn_node_representation.shape[-2] # for 循环溢出的时最后一个batch数据，数据量不一定等于batch_size
+        last_batch_size, max_node_len = gnn_node_representation.shape[0], gnn_node_representation.shape[-2] 
         label_demand = []
         for i in range(opt.n_demand):
             label_demand += [i] * max_node_len
-        label_demand = label_demand * last_batch_size # 区分不同的demand
+        label_demand = label_demand * last_batch_size 
         if not opt.catgy_embedding:
             gnn_node_representation = gnn_node_representation.reshape(-1, opt.hidden_size)
             writer.add_embedding(gnn_node_representation, metadata=label_demand, global_step=epoch,
@@ -248,7 +243,6 @@ def main():
         """
         # ************************************************ test
         # **************************************************************
-        # model 加载代码
 
         # ckpt = torch.load(os.path.join(log_dir_train_checkpoint,f"epoch{epoch}_checkpoint.pth.tar"))
         # model.load_state_dict(ckpt['state_dict'])
@@ -318,7 +312,7 @@ def main():
 
         # scheduler.step(epoch=epoch)
         # early stop judgement
-        bad_counter += 1 - flag  # 在各个评价指标上共出现opt.patience 次坏的结果，
+        bad_counter += 1 - flag 
         if bad_counter >= opt.patience:
             break
 
@@ -383,8 +377,7 @@ if __name__ == '__main__':
 
         Ks = [10, 20, 40, 50, 60, 80, 100]
         Ks_auc = [50, 100, 200, 500]
-
-        # model 加载代码
+        
         ckpt = torch.load(os.path.join(log_dir_train_checkpoint,f"epoch{epoch}_checkpoint.pth.tar"))
 
         model = DemandAwareRS(opt_temp.n_node, opt_temp.n_node_c, opt_temp)
@@ -398,7 +391,7 @@ if __name__ == '__main__':
         recall, mrr, ndcg, auc, info_loss, click_loss, rs_loss = test(opt,epoch, model, criterion, test_loader, opt_temp.lamda,
                                                                       item_category, device, Ks)
 
-        # 打印测试结果
+      
         cprint(log_path_txt, f'Current Result Epoch {epoch}:')
         print_result(log_path_txt, 'Recall', recall, Ks)
         print_result(log_path_txt, 'MRR', mrr, Ks)
