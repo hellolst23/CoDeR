@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @File    : config.py
-# @Software: PyCharm
 # Dec: Parameters for running experiments seriously
 
 import warnings
@@ -9,13 +8,11 @@ import torch as t
 from util.utils import file_write
 
 
-#  1）config.py中的 gpu_id, 和 dataset
-#  2）utils.py中的 file_write函数中的 load_optimal_model=True
-#  3）main.py 中的 epoch， log_dir_train_checkpoint
+
 
 class DefaultConfig(object):
-    # 用于添加output.txt 的首行说明
-    beizhu ="datasets:digi, RS: SR-GNN, last item,  MeanGNN, key demand share， L2正则"#'server: 1607, 数据集 tmall_minoccur30_0321，key demand share，hidden_size=128， sr_gnn 加最后一个item,类别 MeanGNN '#  #  测试gcn mean 聚合'
+
+    beizhu ="datasets:digi, RS: SR-GNN, last item,  MeanGNN, key demand share"
     # beizhu ="datasets:tmall，key demand share，hidden_size=100，sr_gnn"
     beizhu1 = "info"
 
@@ -72,9 +69,9 @@ class DefaultConfig(object):
     demand_share_node = False  # type=bool, default=False, help='Whether node updating parameters in GNN are shared'
 
     predict_catgy_fun = 'dot' #type=str, default='mlp', help='dot/mlp, predict catgy score in demand extraction part'
-    nonhybrid = False  # type=bool, default=False, help='only use the global preference to predict， 目前只在recommend model 为 SR-GNN中用到了 ')
+    nonhybrid = False  # type=bool, default=False, help='only use the global preference to predict'
 
-    node_out = False  # type=bool, default=False, help='aggregate 出度 neighbors'
+    node_out = False  # type=bool, default=False, help='aggregate neighbors'
     topk = 20  # type=int, default=20, help='recall @k, mrr@k'
 
 
@@ -113,9 +110,7 @@ class DefaultConfig(object):
     file_write(log_path_txt, '------------import config.py---------------')
 
     def parse(self):
-        """
-        根据字典kwargs 更新 config参数
-        """
+
         """
         for k, v in kwargs.items():
             if not hasattr(self, k):
