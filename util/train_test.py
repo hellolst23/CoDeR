@@ -25,9 +25,8 @@ from layer.modularity import modularity
 
 def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_loader, item_catgy, device, epoch, opt):
     """
-        一个batch的数据跑完, 返回info loss， click loss 和 recommendation loss
         Args:
-            log_path_txt: 文件路径，such as： output.txt
+            log_path_txt: such as： output.txt
             model: proposed model
             criterion: loss function
             rec_optimizer: optimization method
@@ -41,7 +40,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
             info_loss: float, the mean of batch info_loss
             click_loss: float, the mean of batch click_loss
             rs_loss：float, the mean of batch rs_loss
-            node_representation： torch.Tensor, batch_size * n_demand * max_nodes_len * embedding_dim_node, max_nodes_len: 倒数第二个batch的最大节点数
+            node_representation： torch.Tensor, batch_size * n_demand * max_nodes_len * embedding_dim_node
         """
     file_write(log_path_txt, f'start training: {datetime.datetime.now()}')
     model.train()
@@ -65,7 +64,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
     for i, (sess_nodes, sess_categories, adj_matrixes, nodes_categories_matrixes, target,
             session_last_item_index, mask_node,session_last_catgy_index, mask_catgy) in enumerate(train_loader):
         '''
-        dataloader 返回值
+        dataloader 
         sess_nodes_batch： torch.Tensor, dtype=torch.int64,  batch_size * max_nodes_len
         sess_categories_batch: torch.Tensor， dtype = torch.int64, batch_size * max_session_len
         adj_matrix_batch： torch.Tensor, dtype=torch.float64, batch_size *  max_nodes_len* max_nodes_len
@@ -75,7 +74,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
         mask_batch: torch.Tensor, dtype=torch.int64, batch_size * max_nodes_len, record the clicked nodes in a session
         '''
         '''
-        model forward 函数
+        model forward 
         nodes: torch.Tensor, dtype=torch.int64,  batch_size * max_nodes_len, session unique item sequence.
         categories: torch.Tensor， dtype = torch.int64, batch_size * max_session_len, session items categories sequence.
         adj: torch.Tensor, dtype=torch.float64, batch_size *  max_nodes_len* max_nodes_len, session unique item adjacent matrix.
@@ -215,7 +214,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
 
 # def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_loader, item_catgy, device, epoch, opt):
 #     """
-#         一个batch的数据跑完, 返回info loss， click loss 和 recommendation loss
+#
 #         Args:
 #             log_path_txt: 文件路径，such as： output.txt
 #             model: proposed model
@@ -231,7 +230,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
 #             info_loss: float, the mean of batch info_loss
 #             click_loss: float, the mean of batch click_loss
 #             rs_loss：float, the mean of batch rs_loss
-#             node_representation： torch.Tensor, batch_size * n_demand * max_nodes_len * embedding_dim_node, max_nodes_len: 倒数第二个batch的最大节点数
+#             node_representation： torch.Tensor, batch_size * n_demand * max_nodes_len * embedding_dim_node
 #         """
 #     file_write(log_path_txt, f'start training: {datetime.datetime.now()}')
 #     model.train()
@@ -255,7 +254,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
 #     for i, (sess_nodes, sess_categories, adj_matrixes, nodes_categories_matrixes, target,
 #             session_last_item_index, mask_node,session_last_catgy_index, mask_catgy) in enumerate(train_loader):
 #         '''
-#         dataloader 返回值
+#         dataloader 
 #         sess_nodes_batch： torch.Tensor, dtype=torch.int64,  batch_size * max_nodes_len
 #         sess_categories_batch: torch.Tensor， dtype = torch.int64, batch_size * max_session_len
 #         adj_matrix_batch： torch.Tensor, dtype=torch.float64, batch_size *  max_nodes_len* max_nodes_len
@@ -265,7 +264,7 @@ def train(log_path_txt, model, criterion, rec_optimizer, catgy_optimizer, train_
 #         mask_batch: torch.Tensor, dtype=torch.int64, batch_size * max_nodes_len, record the clicked nodes in a session
 #         '''
 #         '''
-#         model forward 函数
+#         model forward 
 #         nodes: torch.Tensor, dtype=torch.int64,  batch_size * max_nodes_len, session unique item sequence.
 #         categories: torch.Tensor， dtype = torch.int64, batch_size * max_session_len, session items categories sequence.
 #         adj: torch.Tensor, dtype=torch.float64, batch_size *  max_nodes_len* max_nodes_len, session unique item adjacent matrix.
@@ -651,11 +650,7 @@ def get_modularity(adj_matrixes, session_nodes, nodes_categories_matrixes, sess_
     return node_modularity,  categories_modularity
 
 def get_confounder_all(adj_matrixes, session_nodes, target_item, sess_categories, confounder_prior):
-    """
-         Args:
-             session_nodes: [[item_id_0, ... ],...], 多个用户的session序列
-             sess_categories: [[catid_0, ... ],...], 多个用户的类别session序列
-    """
+
     demand_categories = len(sess_categories)
 
     # P(u)
@@ -714,10 +709,6 @@ def get_confounder_all(adj_matrixes, session_nodes, target_item, sess_categories
 def get_confounder(adj_matrixes, session_nodes, target_item, sess_categories, confounder_prior):
     """
         get the confounder of the demand graph
-         Args:
-             session_nodes: [item_id_0, ... ], 一个用户的session序列
-             sess_categories: [catid_0, ... ],一个用户的类别session序列
-
     """
     # P(Ddr) the modularity before adding candidate items
 
@@ -747,13 +738,12 @@ def get_confounder(adj_matrixes, session_nodes, target_item, sess_categories, co
 
 def get_adj_matrix(sess_items, sliding_size=2):
         '''
-        获取一个session的邻接矩阵
         Args:
-            sess_items: [item_id_0, ... ], 一个session序列
+            sess_items: [item_id_0, ... ]
 
         Returns:
             adj_matrix：(solid_adj_matrix, dashed_adj_matrix), dtype = np.array
-            the adjacency matrix of a session, 索引按照该session的item_id 从小到大的顺序排列, 实线连接(有向，只算了入度的)，和虚线连接的分别用一个矩阵存起来
+            the adjacency matrix of a session
             example： sess_items = [6,3,4,3,1,5]
             solid_adj_matrix = [[0,0,0,0,1],
                                 [1,0,1,0,0]，
@@ -771,7 +761,7 @@ def get_adj_matrix(sess_items, sliding_size=2):
         solid_adj_matrix = np.zeros((m_len, m_len))
         dashed_adj_matrix = np.zeros((m_len, m_len))
         for i in np.arange(len(sess_items) - 1):  
-            u = np.where(unique_items == sess_items[i])[0][0]  # np.where() 返回一个元组， 元组元素只有一个，为一个array数组， 记录node array数组中值为session item id 的索引
+            u = np.where(unique_items == sess_items[i])[0][0]  
             v = np.where(unique_items == sess_items[i + 1])[0][0]
             solid_adj_matrix[u][v] += 1
             if sliding_size < 2: 
