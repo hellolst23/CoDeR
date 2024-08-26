@@ -40,7 +40,7 @@ from util.utils import file_write
 #             info_loss: torch.Tensor,  a scalar, the info_max loss
 #             l2_loss: torch.Tensor,  a scalar, the L2 regularization loss
 #             result_click: torch.Tensor， batch_size * n_items
-#             target: torch.Tensor, batch_size, 1维
+#             target: torch.Tensor, batch_size
 #             neg_sample: torch.Tensor, batch_size * n_negative, dtype=torch.long
 #
 #         Returns:
@@ -58,7 +58,7 @@ from util.utils import file_write
 #         # rs_loss = click_loss + 0 * info_loss + l2_loss + 0 * demand_sim_loss
 #         # NOTE：remove demand_sim_loss
 #         # rs_loss = click_loss + lamda * info_loss + l2_loss + 0 * demand_sim_loss
-#         # NOTE：正常loss
+#         
 #         rs_loss = click_loss + lamda * info_loss + l2_loss + 0.5 * demand_sim_loss 
 #
 #         return rs_loss, click_loss
@@ -69,7 +69,7 @@ from util.utils import file_write
 #         Add negative samples into recommendation loss
 #         Args:
 #             result_click: torch.Tensor， batch_size * n_items
-#             target: torch.Tensor, batch_size, 1维, dtype=torch.long
+#             target: torch.Tensor, batch_size, dtype=torch.long
 #             neg_sample: torch.Tensor, batch_size * n_negative, dtype=torch.long
 #         Returns:
 #             click_loss: torch.Tensor,  a scalar, the click loss
@@ -146,7 +146,7 @@ class Loss_Diy(nn.Module):
         # rs_loss = click_loss + 0 * info_loss + l2_loss + 0 * demand_sim_loss
         # NOTE：remove demand_sim_loss
         # rs_loss = click_loss + lamda * info_loss + l2_loss + 0 * demand_sim_loss
-        # NOTE：正常loss
+        
         rs_loss = click_loss + self.info_lamda * info_loss + l2_loss  
         # rs_loss = click_loss + self.info_lamda * info_loss + l2_loss + 0 * demand_sim_loss
         if self.catgy_lamda > 0 :
