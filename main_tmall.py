@@ -352,7 +352,7 @@ if __name__ == '__main__':
 
         time_path = time.strftime("%y%m%d-%H%M%S", time.localtime(time.time()))
         log_dir_train = os.path.join('./visual', opt_temp.dataset, 'DemandRS',
-                                     f"加在最优模型测试_{time_path}_{opt_temp.beizhu1}")
+                                     f"_{time_path}_{opt_temp.beizhu1}")
         log_path_txt = os.path.join(log_dir_train, "output.txt")
         opt_temp.log_path_txt = log_path_txt
 
