@@ -94,7 +94,7 @@ class DefaultConfig(object):
 
     l2 = 1e-5  # type=float, default=1e-5, help='l2 penalty such as [0.001, 0.0005, 0.0001, 0.00005, 0.00001], it is not used.'
     patience = 5  # type=int, default=20, help='the number of epoch to wait before early stop '
-    validation = False  # action='store_true', help='validation' such as action='store_true' 默认值未false # todo
+    validation = False  # action='store_true', help='validation' such as action='store_true'
     valid_portion = 0.1 # type=float, default=0.1, help='split the portion of training set as validation set' # todo tafeng 0.5
 
 
