@@ -317,7 +317,7 @@ if __name__ == '__main__':
 
 
         epoch = 1  # tmall:3 , tafeng:
-        log_dir_train_checkpoint = "current/DemandRS/visual/tafeng_0117/DemandRS/210329-220729_key demand share /checkpoint"
+        log_dir_train_checkpoint = "current/DemandRS/visual/tafeng_0117/DemandRS/checkpoint"
 
         time_path = time.strftime("%y%m%d-%H%M%S", time.localtime(time.time()))
         log_dir_train = os.path.join('./visual', opt_temp.dataset, 'DemandRS',
