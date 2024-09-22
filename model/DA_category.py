@@ -108,7 +108,7 @@ class DemandAwareRS(nn.Module):
             else:
                 weight.data.uniform_(-stdv, stdv)
 
-    def recomend_srgnn(self, hidden, demand_score_candidate, category_candidadte, session_last_item_index, mask_node,
+    def recommend_srgnn(self, hidden, demand_score_candidate, category_candidadte, session_last_item_index, mask_node,
                        batch_size):
         """
         Args:
@@ -264,7 +264,7 @@ class DemandAwareRS(nn.Module):
         l2_loss = self.regularize(gnn_input, mask_node)
 
         if self.recommend_model == 'sr_gnn':
-            P_v, graph_representation = self.recomend_srgnn(gnn_input, demand_score_candidate, embedding_c_candidadte,
+            P_v, graph_representation = self.recommend_srgnn(gnn_input, demand_score_candidate, embedding_c_candidadte,
                                                             session_last_item_index, mask_node, batch_size)
         else:
             P_v, graph_representation = self.recommend_demand(gnn_input, demand_score_candidate, embedding_c_candidadte,
