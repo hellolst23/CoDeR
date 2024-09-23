@@ -190,7 +190,7 @@ class DemandAwareRS(nn.Module):
         P_v = self.compute_score(session_representation, demand_score_candidate, category_candidadte, batch_size)
         return P_v, graph_representation
 
-    def get_demand_Score(self):
+    def get_demand_score(self):
         '''
         Return the demand score and PVSD
         Returns:
