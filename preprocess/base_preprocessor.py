@@ -150,7 +150,7 @@ def exclude_item_notin_training(train, test, item_category, session_info):
         df = df[['user_id', 'start_time', 'end_time', 'item_list', 'category_list', 'target_item','target_category']]
         return df
     df_test = session_encode_split(df_test_1, item_encoder,category_encoder)
-    df_train = session_encode_split(df_train_1, item_encoder, category_encoder) #todo 能跑通，回来检查一下是不是对的
+    df_train = session_encode_split(df_train_1, item_encoder, category_encoder)
     return df_train.values.tolist(), df_test.values.tolist(),item_category_new_1, session_info
 
 

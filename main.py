@@ -10,7 +10,6 @@ from model.model import CoDeR
 from torch.utils.data import DataLoader
 from util.train_test import train, test
 from data.dataset import load_data, RsData, sess_collate_fn
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:32'
 
 def main():
     parser = argparse.ArgumentParser()
@@ -23,7 +22,7 @@ def main():
     parser.add_argument('--epoch', type=int, default=50, help='the number of epochs to train for')
     parser.add_argument('--embedding_dim_i', type=int, default=128, help='item hidden state size')
     parser.add_argument('--embedding_dim_c', type=int, default=128, help='category hidden state size')
-    parser.add_argument('--hidden_size', type=int, default=128, help='hidden state size ')
+    parser.add_argument('--hidden_size', type=int, default=128, help='hidden state size')
     parser.add_argument('--bias', action='store_false', help='bias in GNN linear layer')
     parser.add_argument('--n_demand', type=int, default=2, help='the dimension of demand space')
     parser.add_argument('--n_interest', type=int, default=2, help='the dimension of interest space')
@@ -32,7 +31,7 @@ def main():
     parser.add_argument('--lambda_catgy', type=int, default=2, help='category prediction weight')
     parser.add_argument('--predict_catgy_fun', type=str, default='dot', help='predict category method')
     parser.add_argument('--batch_norm', type=str, default='feature', help='which elements should be normalized')
-    parser.add_argument('--rs', type=str, default='dot', help='pvsd calculation method')
+    parser.add_argument('--rs', type=str, default='dot', help='matching degree calculation method')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
     parser.add_argument('--embed_l2', type=float, default=1e-5, help='l2 penalty')
     parser.add_argument('--drop_item', type=float, default=0, help='item dropout')
@@ -153,7 +152,6 @@ def main():
     file_write(log_path, '-------------------------------------------------------')
     end = time.time()
     file_write(log_path, f"Run time: {(end - start) / 60.0}min")
-
 
 if __name__ == '__main__':
     main()
